@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Prompt Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    },
+                },
+            },
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-slate-900 min-h-screen font-sans text-slate-200">
+
+    <!-- SIDEBAR (inyectado por JS) -->
+    <div id="sidebar-container"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="lg:ml-64 min-h-screen transition-all duration-300">
+
+        <!-- Mobile Header -->
+        <header
+            class="lg:hidden sticky top-0 z-30 bg-slate-800/80 backdrop-blur-md border-b border-slate-700 px-4 py-3 flex items-center justify-between">
+            <button id="mobile-menu-btn" class="p-2 text-slate-300 hover:bg-slate-700 rounded-xl transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <span class="font-bold text-lg">
+                <span class="text-slate-200">PROMPT</span>
+                <span class="text-indigo-400">HUB</span>
+            </span>
+            <div
+                class="w-10 h-10 bg-gradient-to-br from-teal-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                U</div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-6 lg:p-8">
+
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Mis Prompts</h1>
+                    <p class="text-slate-400 mt-1">Gestiona tu biblioteca de prompts de IA</p>
+                </div>
+                <div class="relative max-w-md w-full">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text" placeholder="Buscar prompts..."
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                </div>
+            </div>
+
+            <!-- Prompts Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <!-- CREATE NEW CARD -->
+                <button id="create-new-btn"
+                    class="group block rounded-xl border-2 border-dashed border-slate-700 bg-slate-800/50 overflow-hidden hover:border-indigo-500 hover:bg-slate-800 transition-all duration-300 h-[220px]">
+                    <div class="h-full flex flex-col items-center justify-center p-6">
+                        <div
+                            class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-indigo-500/30 transition-all">
+                            <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <span class="text-slate-300 font-medium">Crear Nuevo Prompt</span>
+                        <span class="text-slate-500 text-sm mt-1">Click para añadir</span>
+                    </div>
+                </button>
+
+                <!-- CARD 1 - ChatGPT (Emerald) -->
+                <a href="edit-note.html"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert Assistant</h3>
+                        <p class="text-emerald-400 text-sm mb-2">Programación</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 días</p>
+                    </div>
+                </a>
+
+                <!-- CARD 2 - MidJourney (Indigo) -->
+                <a href="edit-note.html"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
+                        <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 5 días</p>
+                    </div>
+                </a>
+
+                <!-- CARD 3 - Stable Diffusion (Orange) -->
+                <a href="edit-note.html"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
+                            Diffusion</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador Fotorrealista</h3>
+                        <p class="text-orange-400 text-sm mb-2">Fotografía</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 1 semana</p>
+                    </div>
+                </a>
+
+                <!-- CARD 4 - Claude (Violet) -->
+                <a href="edit-note.html"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="12" r="10" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
+                        <p class="text-violet-400 text-sm mb-2">Escritura</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 semanas</p>
+                    </div>
+                </a>
+
+                <!-- CARD 5 - Gemini (Blue) -->
+                <a href="edit-note.html"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
+                        <p class="text-blue-400 text-sm mb-2">Análisis</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 3 días</p>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: CREAR NOTA -->
+    <div id="create-modal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <h2 class="text-xl font-bold text-slate-100">Crear Nueva Nota</h2>
+                <button id="close-modal-btn"
+                    class="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form class="p-6 space-y-5">
+                <div>
+                    <label for="note-name" class="block text-sm font-medium text-slate-300 mb-2">Nombre del
+                        Prompt</label>
+                    <input type="text" id="note-name" placeholder="Ej: Debug Assistant"
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all"
+                        required>
+                </div>
+                <div>
+                    <label for="note-category" class="block text-sm font-medium text-slate-300 mb-2">Categoría</label>
+                    <select id="note-category"
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all">
+                        <option value="">Seleccionar categoría</option>
+                        <option value="programacion">Programación</option>
+                        <option value="escritura">Escritura</option>
+                        <option value="analisis">Análisis</option>
+                        <option value="diseno">Diseño</option>
+                        <option value="arte">Arte Digital</option>
+                        <option value="fotografia">Fotografía</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="note-ai" class="block text-sm font-medium text-slate-300 mb-2">Tech IA</label>
+                    <select id="note-ai"
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all">
+                        <option value="">Seleccionar IA</option>
+                        <option value="chatgpt">ChatGPT</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="midjourney">MidJourney</option>
+                        <option value="stable-diffusion">Stable Diffusion</option>
+                        <option value="dalle">DALL-E</option>
+                    </select>
+                </div>
+                <button type="submit"
+                    class="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Crear Nota
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Modal Logic
+        var createBtn = document.getElementById('create-new-btn');
+        var modal = document.getElementById('create-modal');
+        var closeModalBtn = document.getElementById('close-modal-btn');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        if (createBtn) createBtn.addEventListener('click', openModal);
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeModal();
+        });
+    </script>
+
+</body>
+
+</html>

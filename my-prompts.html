@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Prompts - Prompt Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { 'sans': ['Inter', 'sans-serif'], 'mono': ['JetBrains Mono', 'monospace'] } } } }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-slate-900 min-h-screen font-sans text-slate-200">
+
+    <!-- SIDEBAR (inyectado por JS) -->
+    <div id="sidebar-container"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="lg:ml-64 min-h-screen transition-all duration-300">
+
+        <!-- Mobile Header -->
+        <header
+            class="lg:hidden sticky top-0 z-30 bg-slate-800/80 backdrop-blur-md border-b border-slate-700 px-4 py-3 flex items-center justify-between">
+            <button id="mobile-menu-btn" class="p-2 text-slate-300 hover:bg-slate-700 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <span class="font-bold text-lg"><span class="text-slate-200">PROMPT</span><span
+                    class="text-indigo-400">HUB</span></span>
+            <div
+                class="w-10 h-10 bg-gradient-to-br from-teal-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                U</div>
+        </header>
+
+        <div class="p-6 lg:p-8">
+
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">My Unit</h1>
+                    <p class="text-slate-400 mt-1">Todos tus prompts organizados</p>
+                </div>
+            </div>
+
+            <!-- Carpetas -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-slate-300 mb-4">Carpetas</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                    <a href="#"
+                        class="flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl hover:border-indigo-500 transition-colors">
+                        <svg class="w-12 h-12 text-indigo-400 mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                        </svg>
+                        <span class="text-sm text-slate-300 text-center">Programación</span>
+                        <span class="text-xs text-slate-500">12 prompts</span>
+                    </a>
+                    <a href="#"
+                        class="flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl hover:border-violet-500 transition-colors">
+                        <svg class="w-12 h-12 text-violet-400 mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                        </svg>
+                        <span class="text-sm text-slate-300 text-center">Escritura</span>
+                        <span class="text-xs text-slate-500">8 prompts</span>
+                    </a>
+                    <a href="#"
+                        class="flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl hover:border-orange-500 transition-colors">
+                        <svg class="w-12 h-12 text-orange-400 mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                        </svg>
+                        <span class="text-sm text-slate-300 text-center">Arte Digital</span>
+                        <span class="text-xs text-slate-500">5 prompts</span>
+                    </a>
+                    <button
+                        class="flex flex-col items-center p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-xl hover:border-indigo-500 transition-colors">
+                        <svg class="w-12 h-12 text-slate-500 mb-2" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span class="text-sm text-slate-500">Nueva Carpeta</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Prompts Recientes -->
+            <h2 class="text-lg font-semibold text-slate-300 mb-4">Prompts Recientes</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <a href="edit-note.html"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert</h3>
+                        <p class="text-emerald-400 text-sm mb-2">Programación</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 días</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

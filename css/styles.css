@@ -1,0 +1,301 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PROMPT HUB - MAIN STYLESHEET
+   Theme: Cyber AI (Dark Mode)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BASE STYLES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+    background-color: rgba(99, 102, 241, 0.3); /* indigo-500 con opacidad */
+    color: #e2e8f0; /* slate-200 */
+}
+
+/* Scrollbar personalizado (Webkit) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b; /* slate-800 */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569; /* slate-600 */
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b; /* slate-500 */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FOLDER TAB CARDS - Efecto de carpeta
+   ───────────────────────────────────────────────────────────────────────────── */
+.folder-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.folder-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HERO BACKGROUND EFFECTS
+   ───────────────────────────────────────────────────────────────────────────── */
+.hero-glow {
+    animation: pulse-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+    0% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.35;
+        transform: scale(1.1);
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BUTTON EFFECTS
+   ───────────────────────────────────────────────────────────────────────────── */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NAVBAR EFFECTS
+   ───────────────────────────────────────────────────────────────────────────── */
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6); /* indigo to violet */
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CODE BLOCKS (Para vista de edición)
+   ───────────────────────────────────────────────────────────────────────────── */
+.code-block {
+    font-family: 'JetBrains Mono', monospace;
+    background-color: #020617; /* slate-950 */
+    border: 1px solid #334155; /* slate-700 */
+    border-radius: 0.75rem;
+}
+
+/* Syntax Highlighting simulado */
+.code-keyword {
+    color: #c084fc; /* violet-400 */
+}
+
+.code-string {
+    color: #2dd4bf; /* teal-400 */
+}
+
+.code-comment {
+    color: #64748b; /* slate-500 */
+    font-style: italic;
+}
+
+.code-function {
+    color: #60a5fa; /* blue-400 */
+}
+
+.code-variable {
+    color: #f472b6; /* pink-400 */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MODAL OVERLAY
+   ───────────────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIDEBAR
+   ───────────────────────────────────────────────────────────────────────────── */
+.sidebar-link {
+    transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(99, 102, 241, 0.1); /* indigo-500 con opacidad */
+    border-left-color: #6366f1; /* indigo-500 */
+}
+
+.sidebar-link.active {
+    background-color: rgba(99, 102, 241, 0.15);
+    border-left-color: #6366f1;
+    color: #a5b4fc; /* indigo-300 */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GRAPH VIEW (Nodos del cerebro)
+   ───────────────────────────────────────────────────────────────────────────── */
+.graph-node {
+    transition: all 0.3s ease;
+}
+
+.graph-node:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+.graph-line {
+    stroke: #475569; /* slate-600 */
+    stroke-width: 2;
+    opacity: 0.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   INPUT FOCUS STATES
+   ───────────────────────────────────────────────────────────────────────────── */
+.input-cyber {
+    transition: all 0.2s ease;
+}
+
+.input-cyber:focus {
+    outline: none;
+    border-color: #8b5cf6; /* violet-500 */
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PILLS / TAGS (Filtros)
+   ───────────────────────────────────────────────────────────────────────────── */
+.pill-tag {
+    transition: all 0.2s ease;
+}
+
+.pill-tag:hover {
+    transform: translateY(-2px);
+}
+
+.pill-tag.active {
+    background-color: #6366f1; /* indigo-500 */
+    color: white;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE UTILITIES
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LOADING STATES
+   ───────────────────────────────────────────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #1e293b 25%,
+        #334155 50%,
+        #1e293b 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BADGE PULSE ANIMATION
+   ───────────────────────────────────────────────────────────────────────────── */
+.pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
