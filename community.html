@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidad - Prompt Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { 'sans': ['Inter', 'sans-serif'], 'mono': ['JetBrains Mono', 'monospace'] } } } }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-slate-900 min-h-screen font-sans text-slate-200 pt-20">
+
+    <!-- NAVBAR para página pública (responsive + fixed) -->
+    <nav class="fixed top-0 left-0 right-0 w-full z-50 bg-slate-800/95 backdrop-blur-md border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold">
+                        <span class="text-slate-200">PROMPT</span><span class="text-indigo-400">HUB</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Links -->
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="index.html" class="px-4 py-2 text-slate-300 hover:text-white transition-colors">Home</a>
+                    <a href="auth-login.html"
+                        class="px-4 py-2 text-slate-300 hover:text-white transition-colors">Iniciar Sesión</a>
+                    <a href="auth-register.html"
+                        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl font-medium transition-colors">Registrarse</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="community-menu-btn"
+                    class="md:hidden p-2 text-slate-400 hover:text-slate-200 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="community-mobile-menu" class="hidden md:hidden mt-4 pb-4 border-t border-slate-700 pt-4">
+                <div class="flex flex-col gap-4">
+                    <a href="index.html"
+                        class="text-slate-200 font-medium hover:text-indigo-400 transition-colors">Home</a>
+                    <a href="auth-login.html" class="text-slate-400 hover:text-indigo-400 transition-colors">Iniciar
+                        Sesión</a>
+                    <a href="auth-register.html"
+                        class="inline-flex items-center justify-center bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors">Registrarse</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+            (function () {
+                var menuBtn = document.getElementById('community-menu-btn');
+                var mobileMenu = document.getElementById('community-mobile-menu');
+                if (menuBtn && mobileMenu) {
+                    menuBtn.addEventListener('click', function () {
+                        mobileMenu.classList.toggle('hidden');
+                        var svg = menuBtn.querySelector('svg');
+                        if (mobileMenu.classList.contains('hidden')) {
+                            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>';
+                        } else {
+                            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+                        }
+                    });
+                }
+            })();
+    </script>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Page Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl lg:text-4xl font-bold text-slate-100 mb-3 flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Comunidad
+            </h1>
+            <p class="text-slate-400 max-w-xl mx-auto">Explora prompts públicos creados por nuestra comunidad. Solo
+                lectura.</p>
+        </div>
+
+        <!-- Buscador -->
+        <div class="max-w-2xl mx-auto mb-6">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input type="text" id="search-input" placeholder="Buscar prompts..."
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-12 pr-4 py-4 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+            </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="flex flex-wrap justify-center gap-3 mb-8" id="category-filters">
+            <button
+                class="filter-btn active px-5 py-2.5 bg-indigo-500 text-white rounded-full text-sm font-medium transition-all"
+                data-category="all">Todos</button>
+            <button
+                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
+                data-category="programacion">💻 Programación</button>
+            <button
+                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
+                data-category="arte">🎨 Arte Digital</button>
+            <button
+                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
+                data-category="escritura">✍️ Escritura</button>
+            <button
+                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
+                data-category="fotografia">📷 Fotografía</button>
+            <button
+                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
+                data-category="analisis">📊 Análisis</button>
+        </div>
+
+        <!-- Resultados Counter -->
+        <div class="flex items-center justify-between mb-6">
+            <p class="text-slate-400">
+                <span id="results-count">48</span> prompts disponibles
+            </p>
+            <select
+                class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:border-indigo-500 focus:outline-none">
+                <option value="recent">Más recientes</option>
+                <option value="popular">Más populares</option>
+                <option value="az">A-Z</option>
+            </select>
+        </div>
+
+        <!-- Prompts Grid - TODOS los prompts públicos (solo lectura) -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="prompts-grid">
+
+            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[260px] cursor-pointer"
+                data-prompt-id="1">
+                <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
+                </div>
+                <div class="p-4 font-mono h-[172px] flex flex-col">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert Assistant</h3>
+                    <p class="text-emerald-400 text-sm mb-2">Programación</p>
+                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Prompt para depurar código de forma eficiente
+                        con explicaciones paso a paso...</p>
+                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                        <span class="text-slate-500 text-xs">Por @developer_pro</span>
+                        <span class="text-slate-500 text-xs flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            234
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[260px] cursor-pointer"
+                data-prompt-id="2">
+                <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
+                </div>
+                <div class="p-4 font-mono h-[172px] flex flex-col">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
+                    <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
+                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Genera imágenes artísticas de alta calidad con
+                        estilos personalizados...</p>
+                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                        <span class="text-slate-500 text-xs">Por @artist_maya</span>
+                        <span class="text-slate-500 text-xs flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            567
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[260px] cursor-pointer"
+                data-prompt-id="3">
+                <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
+                        Diffusion</span>
+                </div>
+                <div class="p-4 font-mono h-[172px] flex flex-col">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador Fotorrealista</h3>
+                    <p class="text-orange-400 text-sm mb-2">Fotografía</p>
+                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Crea imágenes fotorrealistas con control preciso
+                        de iluminación...</p>
+                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                        <span class="text-slate-500 text-xs">Por @photo_master</span>
+                        <span class="text-slate-500 text-xs flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            891
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[260px] cursor-pointer"
+                data-prompt-id="4">
+                <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
+                </div>
+                <div class="p-4 font-mono h-[172px] flex flex-col">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
+                    <p class="text-violet-400 text-sm mb-2">Escritura</p>
+                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Escribe textos persuasivos para marketing y
+                        ventas...</p>
+                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                        <span class="text-slate-500 text-xs">Por @writer_pro</span>
+                        <span class="text-slate-500 text-xs flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            412
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[260px] cursor-pointer"
+                data-prompt-id="5">
+                <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
+                </div>
+                <div class="p-4 font-mono h-[172px] flex flex-col">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
+                    <p class="text-blue-400 text-sm mb-2">Análisis</p>
+                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Analiza datos y genera insights con
+                        explicaciones claras...</p>
+                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                        <span class="text-slate-500 text-xs">Por @data_wizard</span>
+                        <span class="text-slate-500 text-xs flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            156
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 h-[260px] cursor-pointer"
+                data-prompt-id="6">
+                <div class="h-[88px] bg-teal-500 flex items-center justify-center relative">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">DALL-E</span>
+                </div>
+                <div class="p-4 font-mono h-[172px] flex flex-col">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Ilustración Profesional</h3>
+                    <p class="text-teal-400 text-sm mb-2">Arte Digital</p>
+                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Crea ilustraciones profesionales para cualquier
+                        proyecto...</p>
+                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                        <span class="text-slate-500 text-xs">Por @creative_ai</span>
+                        <span class="text-slate-500 text-xs flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            723
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Paginación -->
+        <div id="pagination-container" class="mt-10"></div>
+
+    </main>
+
+    <!-- Modal: Ver Prompt (Solo Lectura) -->
+    <div id="view-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div
+            class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div id="modal-icon" class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="modal-title" class="text-xl font-bold text-slate-100">Debug Expert Assistant</h2>
+                        <p id="modal-author" class="text-sm text-slate-400">Por @developer_pro</p>
+                    </div>
+                </div>
+                <button id="close-view-modal"
+                    class="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span id="modal-category"
+                        class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-sm font-medium rounded-full">Programación</span>
+                    <span class="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded-full">Solo lectura</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4">
+                    <pre id="modal-content" class="font-mono text-sm text-slate-300 whitespace-pre-wrap"># Debug Expert Assistant
+
+Actúa como un experto senior en debugging y resolución de problemas de código.
+
+Tu objetivo es:
+1. Analizar el código proporcionado en busca de errores
+2. Identificar la causa raíz del problema
+3. Proporcionar una solución paso a paso
+4. Explicar por qué ocurrió el error
+
+Formato de respuesta:
+- Diagnóstico: Breve descripción del problema
+- Solución: Código corregido con comentarios
+- Prevención: Tips para evitar errores similares
+
+// Pega tu código con error a continuación:
+[TU_CODIGO_AQUI]</pre>
+                </div>
+                <button id="copy-prompt-btn"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copiar Prompt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pagination.js"></script>
+    <script>
+        // Filtros de categoría
+        var filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                filterBtns.forEach(function (b) {
+                    b.classList.remove('active', 'bg-indigo-500', 'text-white');
+                    b.classList.add('bg-slate-800', 'border', 'border-slate-700', 'text-slate-300');
+                });
+                this.classList.remove('bg-slate-800', 'border', 'border-slate-700', 'text-slate-300');
+                this.classList.add('active', 'bg-indigo-500', 'text-white');
+            });
+        });
+
+        // Modal de visualización
+        var viewModal = document.getElementById('view-modal');
+        var closeViewModal = document.getElementById('close-view-modal');
+        var copyPromptBtn = document.getElementById('copy-prompt-btn');
+
+        document.querySelectorAll('.prompt-card').forEach(function (card) {
+            card.addEventListener('click', function () {
+                viewModal.classList.remove('hidden');
+                viewModal.classList.add('flex');
+            });
+        });
+
+        closeViewModal.addEventListener('click', function () {
+            viewModal.classList.add('hidden');
+            viewModal.classList.remove('flex');
+        });
+
+        viewModal.addEventListener('click', function (e) {
+            if (e.target === viewModal) {
+                viewModal.classList.add('hidden');
+                viewModal.classList.remove('flex');
+            }
+        });
+
+        copyPromptBtn.addEventListener('click', function () {
+            var content = document.getElementById('modal-content').textContent;
+            navigator.clipboard.writeText(content).then(function () {
+                copyPromptBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ¡Copiado!';
+                setTimeout(function () {
+                    copyPromptBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copiar Prompt';
+                }, 2000);
+            });
+        });
+
+        // Paginación
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof PromptHub !== 'undefined' && PromptHub.Pagination) {
+                var pagination = new PromptHub.Pagination({
+                    itemsPerPage: 12,
+                    onPageChange: function (page, info) {
+                        console.log('Página:', page);
+                    }
+                });
+                pagination.init(48, 'pagination-container');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

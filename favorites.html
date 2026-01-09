@@ -39,22 +39,25 @@
 
         <div class="p-6 lg:p-8">
 
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Mis Favoritos</h1>
-                    <p class="text-slate-400 mt-1">Tus prompts guardados como favoritos</p>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Mis Favoritos</h1>
+                        <p class="text-slate-400 mt-1">Tus prompts guardados como favoritos • <span
+                                id="total-count">8</span> prompts</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="favorites-grid">
 
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=1"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px] relative">
                     <div class="absolute top-2 left-2 z-10">
                         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
@@ -80,7 +83,7 @@
                     </div>
                 </a>
 
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=2"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px] relative">
                     <div class="absolute top-2 left-2 z-10">
                         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
@@ -105,12 +108,82 @@
                     </div>
                 </a>
 
+                <a href="edit-note.html?id=3"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px] relative">
+                    <div class="absolute top-2 left-2 z-10">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                    </div>
+                    <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
+                        <p class="text-blue-400 text-sm mb-2">Análisis</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 3 días</p>
+                    </div>
+                </a>
+
+                <a href="edit-note.html?id=4"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px] relative">
+                    <div class="absolute top-2 left-2 z-10">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                    </div>
+                    <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
+                        <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
+                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 5 días</p>
+                    </div>
+                </a>
+
             </div>
+
+            <!-- Paginación -->
+            <div id="pagination-container" class="mt-10"></div>
+
         </div>
     </main>
 
     <script src="js/sidebar.js"></script>
+    <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Paginación
+        document.addEventListener('DOMContentLoaded', function () {
+            var pagination = new PromptHub.Pagination({
+                itemsPerPage: 8,
+                onPageChange: function (page, info) {
+                    console.log('Página:', page, info);
+                    // Cargar favoritos desde Supabase
+                }
+            });
+
+            pagination.init(8, 'pagination-container');
+        });
+    </script>
+
 </body>
 
 </html>

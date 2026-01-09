@@ -57,27 +57,25 @@
             <!-- Page Header -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
-                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Mis Prompts</h1>
-                    <p class="text-slate-400 mt-1">Gestiona tu biblioteca de prompts de IA</p>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100 flex items-center gap-3">
+                        <span class="text-2xl">📍</span> Recientes
+                    </h1>
+                    <p class="text-slate-400 mt-1">Tus últimos prompts abiertos o editados</p>
                 </div>
-                <div class="relative max-w-md w-full">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="text" placeholder="Buscar prompts..."
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                <div class="flex items-center gap-3">
+                    <a href="my-prompts.html"
+                        class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors">
+                        Ver todos →
+                    </a>
                 </div>
             </div>
 
-            <!-- Prompts Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Prompts Grid - Máximo 6 recientes + Create New -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="recent-prompts-grid">
 
-                <!-- CREATE NEW CARD -->
+                <!-- CREATE NEW CARD (siempre primero y destacado) -->
                 <button id="create-new-btn"
-                    class="group block rounded-xl border-2 border-dashed border-slate-700 bg-slate-800/50 overflow-hidden hover:border-indigo-500 hover:bg-slate-800 transition-all duration-300 h-[220px]">
+                    class="group block rounded-xl border-2 border-dashed border-indigo-500/50 bg-indigo-500/5 overflow-hidden hover:border-indigo-400 hover:bg-indigo-500/10 transition-all duration-300 h-[220px]">
                     <div class="h-full flex flex-col items-center justify-center p-6">
                         <div
                             class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-indigo-500/30 transition-all">
@@ -86,13 +84,16 @@
                                     d="M12 4v16m8-8H4" />
                             </svg>
                         </div>
-                        <span class="text-slate-300 font-medium">Crear Nuevo Prompt</span>
-                        <span class="text-slate-500 text-sm mt-1">Click para añadir</span>
+                        <span class="text-indigo-300 font-semibold">Crear Nuevo Prompt</span>
+                        <span class="text-indigo-400/60 text-sm mt-1">Click para añadir</span>
                     </div>
                 </button>
 
+                <!-- Los prompts recientes se cargarán aquí dinámicamente -->
+                <!-- Por ahora mostramos ejemplos estáticos (máximo 6) -->
+
                 <!-- CARD 1 - ChatGPT (Emerald) -->
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=1"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
                     <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
                         <div
@@ -108,12 +109,12 @@
                     <div class="p-4 font-mono h-[132px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert Assistant</h3>
                         <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 días</p>
+                        <p class="text-slate-500 text-xs mt-auto">Hace 2 horas</p>
                     </div>
                 </a>
 
                 <!-- CARD 2 - MidJourney (Indigo) -->
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=2"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px]">
                     <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
                         <div
@@ -128,12 +129,12 @@
                     <div class="p-4 font-mono h-[132px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
                         <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 5 días</p>
+                        <p class="text-slate-500 text-xs mt-auto">Ayer</p>
                     </div>
                 </a>
 
                 <!-- CARD 3 - Stable Diffusion (Orange) -->
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=3"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[220px]">
                     <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
                         <div
@@ -150,12 +151,12 @@
                     <div class="p-4 font-mono h-[132px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador Fotorrealista</h3>
                         <p class="text-orange-400 text-sm mb-2">Fotografía</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 1 semana</p>
+                        <p class="text-slate-500 text-xs mt-auto">Hace 3 días</p>
                     </div>
                 </a>
 
                 <!-- CARD 4 - Claude (Violet) -->
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=4"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px]">
                     <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
                         <div
@@ -170,12 +171,12 @@
                     <div class="p-4 font-mono h-[132px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
                         <p class="text-violet-400 text-sm mb-2">Escritura</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 semanas</p>
+                        <p class="text-slate-500 text-xs mt-auto">Hace 5 días</p>
                     </div>
                 </a>
 
                 <!-- CARD 5 - Gemini (Blue) -->
-                <a href="edit-note.html"
+                <a href="edit-note.html?id=5"
                     class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px]">
                     <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
                         <div
@@ -190,7 +191,28 @@
                     <div class="p-4 font-mono h-[132px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
                         <p class="text-blue-400 text-sm mb-2">Análisis</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 3 días</p>
+                        <p class="text-slate-500 text-xs mt-auto">Hace 1 semana</p>
+                    </div>
+                </a>
+
+                <!-- CARD 6 - DALL-E (Teal) -->
+                <a href="edit-note.html?id=6"
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 h-[220px]">
+                    <div class="h-[88px] bg-teal-500 flex items-center justify-center relative">
+                        <div
+                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">DALL-E</span>
+                    </div>
+                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Ilustración Creativa</h3>
+                        <p class="text-teal-400 text-sm mb-2">Arte Digital</p>
+                        <p class="text-slate-500 text-xs mt-auto">Hace 2 semanas</p>
                     </div>
                 </a>
 
@@ -212,7 +234,7 @@
                     </svg>
                 </button>
             </div>
-            <form class="p-6 space-y-5">
+            <form id="create-form" class="p-6 space-y-5">
                 <div>
                     <label for="note-name" class="block text-sm font-medium text-slate-300 mb-2">Nombre del
                         Prompt</label>
@@ -265,6 +287,7 @@
         var createBtn = document.getElementById('create-new-btn');
         var modal = document.getElementById('create-modal');
         var closeModalBtn = document.getElementById('close-modal-btn');
+        var createForm = document.getElementById('create-form');
 
         function openModal() {
             modal.classList.remove('hidden');
@@ -281,6 +304,33 @@
         modal.addEventListener('click', function (e) {
             if (e.target === modal) closeModal();
         });
+
+        // Create Form Submit
+        if (createForm) {
+            createForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = document.getElementById('note-name').value;
+                var category = document.getElementById('note-category').value;
+                var ai = document.getElementById('note-ai').value;
+
+                // Crear nuevo prompt con ID único
+                var newId = 'new_' + Date.now();
+
+                // Guardar en localStorage (temporal, luego Supabase)
+                var newPrompt = {
+                    id: newId,
+                    title: name,
+                    category: category,
+                    ai_type: ai,
+                    content: '',
+                    created_at: new Date().toISOString()
+                };
+                localStorage.setItem('prompt_' + newId, JSON.stringify(newPrompt));
+
+                // Redireccionar al editor
+                window.location.href = 'edit-note.html?id=' + newId;
+            });
+        }
     </script>
 
 </body>

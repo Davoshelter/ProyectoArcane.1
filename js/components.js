@@ -24,9 +24,6 @@ async function loadComponent(containerId, componentPath) {
         const html = await response.text();
         container.innerHTML = html;
 
-        // Ejecutar scripts del componente cargado
-        executeScripts(container);
-
         // Reinicializar eventos del componente cargado
         initComponentEvents(containerId);
 
@@ -58,14 +55,32 @@ function executeScripts(container) {
 function initComponentEvents(componentId) {
     if (componentId === 'navbar-container') {
         // Mobile menu toggle
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
+        setTimeout(function () {
+            const menuBtn = document.querySelector('#mobile-menu-btn');
+            const mobileMenu = document.querySelector('#mobile-menu');
 
-        if (menuBtn && mobileMenu) {
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
+            console.log('Navbar - Button:', menuBtn, 'Menu:', mobileMenu);
+
+            if (menuBtn && mobileMenu) {
+                menuBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    mobileMenu.classList.toggle('hidden');
+                    console.log('Menu toggled, hidden:', mobileMenu.classList.contains('hidden'));
+
+                    // Cambiar icono hamburguesa <-> X
+                    const svg = menuBtn.querySelector('svg');
+                    if (svg) {
+                        if (mobileMenu.classList.contains('hidden')) {
+                            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+                        } else {
+                            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+                        }
+                    }
+                };
+            } else {
+                console.error('Mobile menu elements not found!');
+            }
+        }, 100);
 
         // Marcar link activo
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';

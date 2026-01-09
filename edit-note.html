@@ -4,19 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Nota - Prompt Hub</title>
-
-    <!-- Tailwind CSS CDN -->
+    <title>Editar Prompt - Prompt Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
-
-    <!-- Tailwind Config -->
+    <!-- Highlight.js para bloques de código -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -29,33 +27,100 @@
             },
         }
     </script>
-
-    <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Estilos para headings del editor */
+        .editor-h1 {
+            color: #10b981;
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+
+        .editor-h2 {
+            color: #eab308;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .editor-h3 {
+            color: #ef4444;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Estilos para bloques de código */
+        .code-block-wrapper {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .code-block-header {
+            background: #161b22;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .code-block-content {
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block-content pre {
+            margin: 0;
+            background: transparent !important;
+        }
+
+        /* Editor contenteditable */
+        .rich-editor:focus {
+            outline: none;
+        }
+
+        .rich-editor [contenteditable]:focus {
+            outline: none;
+        }
+
+        /* Comando /code tooltip */
+        .command-hint {
+            position: absolute;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            display: none;
+        }
+
+        .command-hint.visible {
+            display: block;
+        }
+    </style>
 </head>
 
 <body class="bg-slate-900 min-h-screen font-sans text-slate-200">
 
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <!-- SIDEBAR -->
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- SIDEBAR (inyectado por JS) -->
     <div id="sidebar-container"></div>
 
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- MAIN CONTENT -->
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <main class="lg:ml-64 min-h-screen flex flex-col">
+    <main class="lg:ml-64 min-h-screen flex flex-col transition-all duration-300">
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- NOTE HEADER -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- HEADER con botones de acción -->
         <header class="sticky top-0 z-30 bg-slate-800/95 backdrop-blur-md border-b border-slate-700">
             <div class="flex items-center justify-between p-4 lg:px-8">
 
                 <!-- Left: Back + Info -->
                 <div class="flex items-center gap-4">
                     <!-- Mobile Menu -->
-                    <button onclick="PromptHub.Sidebar.toggle()"
+                    <button id="mobile-menu-btn"
                         class="lg:hidden p-2 text-slate-300 hover:bg-slate-700 rounded-xl transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -74,27 +139,49 @@
 
                     <!-- AI Icon + Info -->
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+                        <div id="prompt-icon"
+                            class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
                             <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
                                 <path
                                     d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
                             </svg>
                         </div>
-                        <div>
-                            <h1 class="font-bold text-slate-100">Debug Expert Assistant</h1>
+                        <div class="hidden sm:block">
+                            <h1 id="prompt-title-display" class="font-bold text-slate-100">Debug Expert Assistant</h1>
                             <div class="flex items-center gap-2 text-sm">
-                                <span
+                                <span id="prompt-category-badge"
                                     class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full">Programación</span>
                                 <span class="text-slate-500">•</span>
-                                <span class="text-slate-500">Última edición hace 2 días</span>
+                                <span id="prompt-last-edit" class="text-slate-500">Última edición hace 2 días</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: Actions -->
+                <!-- Right: Actions (TODOS EN EL HEADER) -->
                 <div class="flex items-center gap-2">
-                    <button
+                    <!-- Historial -->
+                    <button id="history-btn"
+                        class="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-xl transition-colors"
+                        title="Historial de versiones">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+
+                    <!-- Compartir -->
+                    <button id="share-btn"
+                        class="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-700 rounded-xl transition-colors"
+                        title="Compartir">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                    </button>
+
+                    <!-- Favorito -->
+                    <button id="favorite-btn"
                         class="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-700 rounded-xl transition-colors"
                         title="Favorito">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,158 +189,333 @@
                                 d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                         </svg>
                     </button>
-                    <button
-                        class="hidden sm:flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors">
+
+                    <!-- Guardar -->
+                    <button id="save-btn"
+                        class="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-indigo-500/25">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                         </svg>
-                        Guardar
+                        <span class="hidden sm:inline">Guardar</span>
+                    </button>
+
+                    <!-- AI Assistant Toggle -->
+                    <button id="ai-toggle-btn"
+                        class="p-2 text-slate-400 hover:text-violet-400 hover:bg-slate-700 rounded-xl transition-colors ml-2"
+                        title="Asistente IA">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
         <!-- EDITOR BODY -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <div class="flex-1 p-6 lg:p-8 max-w-5xl w-full mx-auto">
+        <div class="flex-1 flex">
+            <!-- Editor Principal -->
+            <div class="flex-1 p-6 lg:p-8 max-w-5xl w-full mx-auto">
 
-            <!-- Title -->
-            <div class="mb-6">
-                <input type="text" value="Prompt para depurar código de forma eficiente"
-                    placeholder="Título descriptivo del prompt..."
-                    class="w-full bg-transparent border-none text-2xl lg:text-3xl font-bold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-0">
-            </div>
+                <!-- Title -->
+                <div class="mb-6">
+                    <input type="text" id="prompt-title" value="Prompt para depurar código de forma eficiente"
+                        placeholder="Título descriptivo del prompt..."
+                        class="w-full bg-transparent border-none text-2xl lg:text-3xl font-bold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-0">
+                </div>
 
-            <!-- Tags -->
-            <div class="flex flex-wrap gap-2 mb-8">
-                <span
-                    class="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 flex items-center gap-2">
-                    #debugging
-                    <button class="text-slate-500 hover:text-red-400">×</button>
-                </span>
-                <span
-                    class="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 flex items-center gap-2">
-                    #python
-                    <button class="text-slate-500 hover:text-red-400">×</button>
-                </span>
-                <button
-                    class="px-3 py-1.5 border border-dashed border-slate-600 rounded-full text-sm text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-colors">
-                    + Añadir tag
-                </button>
-            </div>
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2 mb-6" id="tags-container">
+                    <span
+                        class="tag-item px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 flex items-center gap-2">
+                        #debugging
+                        <button class="text-slate-500 hover:text-red-400 remove-tag">×</button>
+                    </span>
+                    <span
+                        class="tag-item px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 flex items-center gap-2">
+                        #python
+                        <button class="text-slate-500 hover:text-red-400 remove-tag">×</button>
+                    </span>
+                    <button id="add-tag-btn"
+                        class="px-3 py-1.5 border border-dashed border-slate-600 rounded-full text-sm text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-colors">
+                        + Añadir tag
+                    </button>
+                </div>
 
-            <!-- Code Block -->
-            <div class="code-block bg-slate-950 border border-slate-700 rounded-2xl overflow-hidden mb-6">
-                <!-- Code Header -->
-                <div class="flex items-center justify-between px-4 py-3 bg-slate-900/50 border-b border-slate-700">
-                    <div class="flex items-center gap-2">
-                        <div class="flex gap-1.5">
-                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-                            <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
-                            <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-                        </div>
-                        <span class="text-sm text-slate-500 ml-2">prompt.txt</span>
-                    </div>
-                    <button onclick="PromptHub.Clipboard.copy(document.getElementById('prompt-code').innerText)"
-                        class="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors">
+                <!-- Toolbar de Formato -->
+                <div class="flex items-center gap-1 p-2 bg-slate-800/50 border border-slate-700 rounded-xl mb-4">
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="h1" title="Título H1 (Verde)">
+                        <span class="font-bold text-sm">H1</span>
+                    </button>
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-yellow-400 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="h2" title="Título H2 (Amarillo)">
+                        <span class="font-bold text-sm">H2</span>
+                    </button>
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="h3" title="Título H3 (Rojo)">
+                        <span class="font-bold text-sm">H3</span>
+                    </button>
+                    <div class="w-px h-6 bg-slate-700 mx-1"></div>
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="bold" title="Negrita">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z" />
+                        </svg>
+                    </button>
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="italic" title="Cursiva">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                d="M10 4h4m-2 0v16m-4 0h8" />
                         </svg>
-                        Copiar
+                    </button>
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="code" title="Código inline">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </button>
+                    <div class="w-px h-6 bg-slate-700 mx-1"></div>
+                    <button
+                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
+                        data-format="list" title="Lista">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <button id="insert-code-block"
+                        class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-700 rounded-lg transition-colors"
+                        title="Insertar bloque de código (/code)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                     </button>
                 </div>
 
-                <!-- Code Content -->
-                <div id="prompt-code" class="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
-                    <p class="text-slate-300"><span class="code-comment"># Debug Expert Assistant</span></p>
-                    <br>
-                    <p class="text-slate-300"><span class="code-keyword">Actúa como</span> un experto senior en
-                        debugging y resolución de problemas de código.</p>
-                    <br>
-                    <p class="text-slate-300"><span class="code-keyword">Tu objetivo es</span>:</p>
-                    <p class="text-slate-300">1. Analizar el código proporcionado en busca de errores</p>
-                    <p class="text-slate-300">2. Identificar la <span class="code-variable">causa raíz</span> del
-                        problema</p>
-                    <p class="text-slate-300">3. Proporcionar una solución paso a paso</p>
-                    <p class="text-slate-300">4. Explicar <span class="code-string">por qué</span> ocurrió el error</p>
-                    <br>
-                    <p class="text-slate-300"><span class="code-keyword">Formato de respuesta</span>:</p>
-                    <p class="text-slate-300">- <span class="code-function">Diagnóstico</span>: Breve descripción del
-                        problema</p>
-                    <p class="text-slate-300">- <span class="code-function">Solución</span>: Código corregido con
-                        comentarios</p>
-                    <p class="text-slate-300">- <span class="code-function">Prevención</span>: Tips para evitar errores
-                        similares</p>
-                    <br>
-                    <p class="text-slate-300"><span class="code-comment">// Pega tu código con error a
-                            continuación:</span></p>
-                    <p class="text-slate-300"><span class="code-variable">[TU_CODIGO_AQUI]</span></p>
+                <!-- Editor de Contenido -->
+                <div id="editor-container"
+                    class="rich-editor min-h-[400px] bg-slate-800/30 border border-slate-700 rounded-xl p-6 mb-6">
+                    <!-- Bloque de código existente -->
+                    <div class="code-block-wrapper" id="main-code-block">
+                        <div class="code-block-header">
+                            <div class="flex items-center gap-2">
+                                <div class="flex gap-1.5">
+                                    <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                                    <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                                </div>
+                                <select id="code-language"
+                                    class="bg-transparent text-sm text-slate-400 border-none focus:outline-none cursor-pointer">
+                                    <option value="plaintext">prompt.txt</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="html">HTML</option>
+                                    <option value="css">CSS</option>
+                                    <option value="python">Python</option>
+                                    <option value="sql">SQL</option>
+                                </select>
+                            </div>
+                            <button id="copy-code-btn"
+                                class="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                Copiar
+                            </button>
+                        </div>
+                        <div class="code-block-content">
+                            <textarea id="prompt-content"
+                                class="w-full min-h-[300px] bg-transparent font-mono text-sm text-slate-300 leading-relaxed resize-none focus:outline-none"
+                                placeholder="Escribe tu prompt aquí... Usa /code para insertar un bloque de código."># Debug Expert Assistant
+
+Actúa como un experto senior en debugging y resolución de problemas de código.
+
+Tu objetivo es:
+1. Analizar el código proporcionado en busca de errores
+2. Identificar la causa raíz del problema
+3. Proporcionar una solución paso a paso
+4. Explicar por qué ocurrió el error
+
+Formato de respuesta:
+- Diagnóstico: Breve descripción del problema
+- Solución: Código corregido con comentarios
+- Prevención: Tips para evitar errores similares
+
+// Pega tu código con error a continuación:
+[TU_CODIGO_AQUI]</textarea>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Notes Section -->
+                <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-6">
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Notas adicionales</label>
+                    <textarea id="prompt-notes"
+                        placeholder="Añade notas sobre cuándo usar este prompt, variaciones, etc..." rows="3"
+                        class="w-full bg-transparent border-none text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-0 resize-none">Funciona mejor con errores de Python y JavaScript. Para errores de compilación, especificar el lenguaje al inicio.</textarea>
+                </div>
+
             </div>
 
-            <!-- Notes Section -->
-            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-6">
-                <label class="block text-sm font-medium text-slate-400 mb-2">Notas adicionales</label>
-                <textarea placeholder="Añade notas sobre cuándo usar este prompt, variaciones, etc..." rows="3"
-                    class="w-full bg-transparent border-none text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-0 resize-none">Funciona mejor con errores de Python y JavaScript. Para errores de compilación, especificar el lenguaje al inicio.</textarea>
-            </div>
+            <!-- AI SIDEBAR (Right) -->
+            <aside id="ai-sidebar"
+                class="fixed right-0 top-0 h-screen w-0 lg:w-0 bg-slate-800 border-l border-slate-700 flex flex-col z-40 overflow-hidden transition-all duration-300">
+                <!-- AI Header -->
+                <div class="p-4 border-b border-slate-700 flex items-center justify-between min-h-[72px]">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-slate-200">Asistente IA</span>
+                    </div>
+                    <button id="close-ai-sidebar"
+                        class="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
+                <!-- AI Quick Actions -->
+                <div class="p-3 border-b border-slate-700">
+                    <p class="text-xs text-slate-500 mb-2">Acciones rápidas</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            class="ai-action px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-sm text-slate-300 rounded-full transition-colors">✨
+                            Mejorar</button>
+                        <button
+                            class="ai-action px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-sm text-slate-300 rounded-full transition-colors">🌐
+                            Traducir</button>
+                        <button
+                            class="ai-action px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-sm text-slate-300 rounded-full transition-colors">📝
+                            Explicar</button>
+                    </div>
+                </div>
+
+                <!-- AI Chat Area -->
+                <div id="ai-chat" class="flex-1 p-4 overflow-y-auto space-y-4">
+                    <!-- Welcome message -->
+                    <div class="flex gap-3">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-xl rounded-tl-none p-3 max-w-[85%]">
+                            <p class="text-sm text-slate-300">¡Hola! Soy tu asistente de IA. Puedo ayudarte a mejorar
+                                tus prompts, traducirlos o explicar conceptos. ¿En qué puedo ayudarte?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Input -->
+                <div class="p-4 border-t border-slate-700">
+                    <div class="flex gap-2">
+                        <input type="text" id="ai-input" placeholder="Escribe tu mensaje..."
+                            class="flex-1 bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:border-violet-500 focus:outline-none transition-colors">
+                        <button id="ai-send"
+                            class="p-2.5 bg-violet-500 hover:bg-violet-400 text-white rounded-xl transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </aside>
         </div>
-
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- FOOTER TOOLBAR -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <footer class="sticky bottom-0 bg-slate-800 border-t border-slate-700 p-4">
-            <div class="max-w-5xl mx-auto flex items-center justify-between">
-                <!-- Left Tools -->
-                <div class="flex items-center gap-2">
-                    <button
-                        class="p-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-xl transition-colors"
-                        title="Formato texto">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h8m-8 6h16" />
-                        </svg>
-                    </button>
-                    <button
-                        class="p-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-xl transition-colors"
-                        title="Adjuntar archivo">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                        </svg>
-                    </button>
-                    <button
-                        class="p-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-xl transition-colors"
-                        title="Compartir">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Right: Save -->
-                <button
-                    class="flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-indigo-500/25">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                    </svg>
-                    Guardar Cambios
-                </button>
-            </div>
-        </footer>
 
     </main>
 
-    <!-- Scripts -->
-    <script src="js/components.js"></script>
-    <script src="js/main.js"></script>
+    <!-- MODAL: Historial de Versiones -->
+    <div id="history-modal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div
+            class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl max-h-[80vh] flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h2 class="text-xl font-bold text-slate-100">Historial de Versiones</h2>
+                </div>
+                <button id="close-history-modal"
+                    class="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="history-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <!-- Las versiones se cargarán aquí dinámicamente -->
+                <p class="text-slate-500 text-center py-8">No hay versiones guardadas aún.<br>Cada vez que guardes, se
+                    creará una versión.</p>
+            </div>
+        </div>
+    </div>
 
+    <!-- MODAL: Compartir -->
+    <div id="share-modal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <h2 class="text-xl font-bold text-slate-100">Compartir Prompt</h2>
+                <button id="close-share-modal"
+                    class="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Email del usuario</label>
+                    <input type="email" id="share-email" placeholder="usuario@email.com"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Permisos</label>
+                    <select id="share-permission"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:border-indigo-500 focus:outline-none">
+                        <option value="view">Solo ver</option>
+                        <option value="edit">Puede editar</option>
+                    </select>
+                </div>
+                <button id="share-submit"
+                    class="w-full bg-teal-500 hover:bg-teal-400 text-white font-semibold py-3 rounded-xl transition-colors">
+                    Compartir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/version-history.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>

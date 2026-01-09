@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compartir - Prompt Hub</title>
+    <title>Compartidos - Prompt Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +39,7 @@
 
         <div class="p-6 lg:p-8">
 
+            <!-- Header -->
             <div class="flex items-center gap-4 mb-8">
                 <div class="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center">
                     <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,22 +48,27 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Compartir</h1>
-                    <p class="text-slate-400 mt-1">Prompts compartidos contigo por otros usuarios</p>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Compartidos</h1>
+                    <p class="text-slate-400 mt-1">Prompts compartidos contigo y por ti</p>
                 </div>
             </div>
 
-            <div class="mb-8">
+            <!-- Compartidos Conmigo -->
+            <div class="mb-10">
                 <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
                     <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                     </svg>
                     Compartidos Conmigo
+                    <span class="text-slate-500 text-sm font-normal">• 3 prompts</span>
                 </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <a href="edit-note.html"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px]">
+
+                    <!-- Card con indicador de usuarios -->
+                    <div class="shared-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px] cursor-pointer"
+                        data-prompt-id="shared1" data-shared-by="maria@email.com"
+                        data-shared-users='["maria@email.com"]'>
                         <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
                             <div
                                 class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
@@ -72,61 +78,262 @@
                             </div>
                             <span
                                 class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
+                            <!-- Badge de compartido por -->
+                            <span
+                                class="absolute bottom-2 left-2 px-2 py-1 bg-black/30 backdrop-blur-sm rounded-lg text-[10px] text-white flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                @maria
+                            </span>
                         </div>
                         <div class="p-4 font-mono h-[132px] flex flex-col">
                             <h3 class="text-base font-bold text-slate-100 mb-1 truncate">SEO Content Writer</h3>
                             <p class="text-blue-400 text-sm mb-2">Marketing</p>
                             <div class="flex items-center justify-between mt-auto">
-                                <span class="text-slate-500 text-xs">Por @maria</span>
                                 <span class="text-slate-500 text-xs">Hace 3 días</span>
+                                <span class="text-teal-400 text-xs flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    Solo ver
+                                </span>
                             </div>
                         </div>
-                    </a>
+                    </div>
+
+                    <div class="shared-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px] cursor-pointer"
+                        data-prompt-id="shared2" data-shared-by="carlos@email.com"
+                        data-shared-users='["carlos@email.com"]'>
+                        <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>
+                            </div>
+                            <span
+                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
+                            <span
+                                class="absolute bottom-2 left-2 px-2 py-1 bg-black/30 backdrop-blur-sm rounded-lg text-[10px] text-white flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                @carlos
+                            </span>
+                        </div>
+                        <div class="p-4 font-mono h-[132px] flex flex-col">
+                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Technical Writer</h3>
+                            <p class="text-violet-400 text-sm mb-2">Documentación</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <span class="text-slate-500 text-xs">Hace 1 semana</span>
+                                <span class="text-emerald-400 text-xs flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Puede editar
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+                <!-- Paginación Compartidos Conmigo -->
+                <div id="pagination-shared-with-me" class="mt-6"></div>
             </div>
 
-            <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                </svg>
-                Prompts que he Compartido
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <a href="edit-note.html"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert</h3>
-                        <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                        <div class="flex items-center justify-between mt-auto">
-                            <span class="text-teal-400 text-xs flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <!-- Mis Compartidos -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Prompts que he Compartido
+                    <span class="text-slate-500 text-sm font-normal">• 2 prompts</span>
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                    <div class="shared-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px] cursor-pointer"
+                        data-prompt-id="myshared1"
+                        data-shared-users='["ana@email.com", "pedro@email.com", "lucia@email.com"]'>
+                        <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
                                     <path
-                                        d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                        d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
                                 </svg>
-                                3 usuarios
-                            </span>
-                            <span class="text-slate-500 text-xs">Hace 1 día</span>
+                            </div>
+                            <span
+                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
+                        </div>
+                        <div class="p-4 font-mono h-[132px] flex flex-col">
+                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert</h3>
+                            <p class="text-emerald-400 text-sm mb-2">Programación</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <span class="text-teal-400 text-xs flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                    </svg>
+                                    3 usuarios
+                                </span>
+                                <span class="text-slate-500 text-xs">Hace 1 día</span>
+                            </div>
                         </div>
                     </div>
-                </a>
+
+                    <div class="shared-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[220px] cursor-pointer"
+                        data-prompt-id="myshared2" data-shared-users='["team@email.com"]'>
+                        <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
+                                Diffusion</span>
+                        </div>
+                        <div class="p-4 font-mono h-[132px] flex flex-col">
+                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador de Assets</h3>
+                            <p class="text-orange-400 text-sm mb-2">Diseño</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <span class="text-teal-400 text-xs flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                    </svg>
+                                    1 usuario
+                                </span>
+                                <span class="text-slate-500 text-xs">Hace 5 días</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Paginación Mis Compartidos -->
+                <div id="pagination-my-shared" class="mt-6"></div>
             </div>
+
         </div>
     </main>
 
+    <!-- Modal: Lista de Usuarios con Acceso -->
+    <div id="users-modal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-100">Usuarios con Acceso</h2>
+                    <p id="modal-prompt-name" class="text-sm text-slate-400 mt-1">Nombre del prompt</p>
+                </div>
+                <button id="close-users-modal"
+                    class="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="users-list" class="p-4 space-y-3 max-h-[400px] overflow-y-auto">
+                <!-- Los usuarios se cargan dinámicamente -->
+            </div>
+            <div class="p-4 border-t border-slate-700">
+                <button id="add-user-btn"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-teal-500 hover:bg-teal-400 text-white font-medium rounded-xl transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    Compartir con otro usuario
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/sidebar.js"></script>
+    <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Modal de usuarios
+        var usersModal = document.getElementById('users-modal');
+        var closeUsersModal = document.getElementById('close-users-modal');
+        var usersList = document.getElementById('users-list');
+        var modalPromptName = document.getElementById('modal-prompt-name');
+
+        // Abrir modal al hacer clic en una tarjeta compartida
+        document.querySelectorAll('.shared-card').forEach(function (card) {
+            card.addEventListener('click', function () {
+                var promptId = this.getAttribute('data-prompt-id');
+                var promptName = this.querySelector('h3').textContent;
+                var sharedUsers = JSON.parse(this.getAttribute('data-shared-users') || '[]');
+
+                modalPromptName.textContent = promptName;
+
+                // Renderizar lista de usuarios
+                var html = '';
+                sharedUsers.forEach(function (email, index) {
+                    var initials = email.substring(0, 2).toUpperCase();
+                    var colors = ['from-teal-400 to-indigo-500', 'from-violet-400 to-pink-500', 'from-emerald-400 to-teal-500', 'from-orange-400 to-red-500'];
+                    var color = colors[index % colors.length];
+
+                    html += '<div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl">';
+                    html += '  <div class="flex items-center gap-3">';
+                    html += '    <div class="w-10 h-10 bg-gradient-to-br ' + color + ' rounded-full flex items-center justify-center text-white font-semibold text-sm">' + initials + '</div>';
+                    html += '    <div>';
+                    html += '      <p class="text-sm font-medium text-slate-200">' + email + '</p>';
+                    html += '      <p class="text-xs text-slate-500">Puede ver</p>';
+                    html += '    </div>';
+                    html += '  </div>';
+                    html += '  <button class="p-2 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors" title="Revocar acceso">';
+                    html += '    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+                    html += '  </button>';
+                    html += '</div>';
+                });
+
+                if (sharedUsers.length === 0) {
+                    html = '<p class="text-center text-slate-500 py-8">Este prompt no está compartido con nadie.</p>';
+                }
+
+                usersList.innerHTML = html;
+
+                usersModal.classList.remove('hidden');
+                usersModal.classList.add('flex');
+            });
+        });
+
+        // Cerrar modal
+        closeUsersModal.addEventListener('click', function () {
+            usersModal.classList.add('hidden');
+            usersModal.classList.remove('flex');
+        });
+
+        usersModal.addEventListener('click', function (e) {
+            if (e.target === usersModal) {
+                usersModal.classList.add('hidden');
+                usersModal.classList.remove('flex');
+            }
+        });
+
+        // Inicializar paginación (ejemplo)
+        document.addEventListener('DOMContentLoaded', function () {
+            // En el futuro, esto vendrá de Supabase
+            // Por ahora es visual
+        });
+    </script>
+
 </body>
 
 </html>

@@ -385,7 +385,37 @@
                     .attr('stroke-width', 2);
 
                 document.getElementById('info-panel').classList.add('hidden');
+            })
+            .on('dblclick', function (event, d) {
+                // Navigate to the prompt on double-click
+                event.preventDefault();
+                event.stopPropagation();
+
+                // Visual feedback - pulse effect
+                d3.select(this).select('circle')
+                    .transition()
+                    .duration(100)
+                    .attr('r', d.size * 1.3)
+                    .style('filter', `drop-shadow(0 0 25px ${d.color})`)
+                    .transition()
+                    .duration(100)
+                    .attr('r', d.size);
+
+                // Navigate after brief delay
+                setTimeout(() => {
+                    window.location.href = `edit-note.html?id=${d.id}`;
+                }, 250);
             });
+
+        // Add tooltip hint to info panel
+        const infoPanel = document.getElementById('info-panel');
+        if (infoPanel && !document.getElementById('info-hint')) {
+            const hint = document.createElement('p');
+            hint.id = 'info-hint';
+            hint.className = 'text-xs text-indigo-400 mt-2';
+            hint.innerHTML = '💡 Doble clic para abrir';
+            infoPanel.querySelector('.space-y-2')?.appendChild(hint);
+        }
 
         // Simulation tick
         simulation.on('tick', () => {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorar Prompts - Prompt Hub</title>
+    <title>Mis Publicados - Prompt Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,48 +40,50 @@
         <div class="p-6 lg:p-8">
 
             <!-- Page Header -->
-            <div class="text-center mb-10">
-                <h1 class="text-3xl lg:text-4xl font-bold text-slate-100 mb-3">Explorar Prompts</h1>
-                <p class="text-slate-400 max-w-xl mx-auto">Descubre prompts creados por la comunidad y potencia tu
-                    trabajo con IA</p>
-            </div>
-
-            <!-- Search -->
-            <div class="max-w-2xl mx-auto mb-8">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                     </div>
-                    <input type="text" placeholder="Buscar prompts..."
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-12 pr-4 py-4 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                    <div>
+                        <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Mis Prompts Públicos</h1>
+                        <p class="text-slate-400 mt-1">Prompts que has publicado para la comunidad • <span
+                                id="total-count">3</span> publicados</p>
+                    </div>
+                </div>
+                <a href="community.html"
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-300 hover:bg-slate-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Ver Comunidad
+                </a>
+            </div>
+
+            <!-- Info Banner -->
+            <div class="bg-teal-500/10 border border-teal-500/30 rounded-xl p-4 mb-8 flex items-start gap-3">
+                <svg class="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <p class="text-teal-300 text-sm font-medium">Estos prompts son visibles para toda la comunidad</p>
+                    <p class="text-teal-400/70 text-xs mt-1">Puedes cambiar la visibilidad desde el editor de cada
+                        prompt.</p>
                 </div>
             </div>
 
-            <!-- Filter Pills -->
-            <div class="flex flex-wrap justify-center gap-3 mb-12">
-                <button
-                    class="px-5 py-2.5 bg-indigo-500 text-white rounded-full text-sm font-medium transition-all">Todos</button>
-                <button
-                    class="px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all">Programación</button>
-                <button
-                    class="px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all">Arte
-                    Digital</button>
-                <button
-                    class="px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all">Escritura</button>
-                <button
-                    class="px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all">Fotografía</button>
-                <button
-                    class="px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all">Análisis</button>
-            </div>
+            <!-- Prompts Grid - Solo MIS prompts públicos -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="prompts-grid">
 
-            <!-- Prompts Grid -->
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                <a href="#"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
+                <!-- Card de prompt público del usuario -->
+                <div
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[250px]">
                     <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
                         <div
                             class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
@@ -92,56 +94,39 @@
                         </div>
                         <span
                             class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
+                        <!-- Badge público -->
+                        <span
+                            class="absolute top-2 left-2 px-2 py-0.5 bg-teal-500 rounded-full text-[10px] text-white font-medium flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Público
+                        </span>
                     </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                    <div class="p-4 font-mono h-[162px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert Assistant</h3>
                         <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 días</p>
-                    </div>
-                </a>
-
-                <a href="#"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
-                            </svg>
+                        <p class="text-slate-500 text-xs line-clamp-2 mb-3">Prompt para depurar código de forma
+                            eficiente con explicaciones paso a paso...</p>
+                        <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                            <span class="text-slate-500 text-xs flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd"
+                                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                234 vistas
+                            </span>
+                            <a href="edit-note.html?id=1" class="text-indigo-400 text-xs hover:text-indigo-300">Editar
+                                →</a>
                         </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
                     </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
-                        <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 5 días</p>
-                    </div>
-                </a>
+                </div>
 
-                <a href="#"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
-                            Diffusion</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador Fotorrealista</h3>
-                        <p class="text-orange-400 text-sm mb-2">Fotografía</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 1 semana</p>
-                    </div>
-                </a>
-
-                <a href="#"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px]">
+                <div
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[250px]">
                     <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
                         <div
                             class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
@@ -151,16 +136,38 @@
                         </div>
                         <span
                             class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
+                        <span
+                            class="absolute top-2 left-2 px-2 py-0.5 bg-teal-500 rounded-full text-[10px] text-white font-medium flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Público
+                        </span>
                     </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                    <div class="p-4 font-mono h-[162px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
                         <p class="text-violet-400 text-sm mb-2">Escritura</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 semanas</p>
+                        <p class="text-slate-500 text-xs line-clamp-2 mb-3">Crea textos persuasivos para marketing y
+                            ventas...</p>
+                        <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                            <span class="text-slate-500 text-xs flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd"
+                                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                156 vistas
+                            </span>
+                            <a href="edit-note.html?id=2" class="text-indigo-400 text-xs hover:text-indigo-300">Editar
+                                →</a>
+                        </div>
                     </div>
-                </a>
+                </div>
 
-                <a href="#"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px]">
+                <div
+                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[250px]">
                     <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
                         <div
                             class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
@@ -170,48 +177,83 @@
                         </div>
                         <span
                             class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
+                        <span
+                            class="absolute top-2 left-2 px-2 py-0.5 bg-teal-500 rounded-full text-[10px] text-white font-medium flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Público
+                        </span>
                     </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
+                    <div class="p-4 font-mono h-[162px] flex flex-col">
                         <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
                         <p class="text-blue-400 text-sm mb-2">Análisis</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 3 días</p>
+                        <p class="text-slate-500 text-xs line-clamp-2 mb-3">Analiza datos y genera insights con
+                            explicaciones claras...</p>
+                        <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
+                            <span class="text-slate-500 text-xs flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd"
+                                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                89 vistas
+                            </span>
+                            <a href="edit-note.html?id=3" class="text-indigo-400 text-xs hover:text-indigo-300">Editar
+                                →</a>
+                        </div>
                     </div>
-                </a>
+                </div>
 
-                <a href="#"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-teal-500 flex items-center justify-center relative">
+                <!-- Card para publicar nuevo -->
+                <button onclick="window.location.href='my-prompts.html'"
+                    class="group block rounded-xl border-2 border-dashed border-teal-500/50 bg-teal-500/5 overflow-hidden hover:border-teal-400 hover:bg-teal-500/10 transition-all duration-300 h-[250px]">
+                    <div class="h-full flex flex-col items-center justify-center p-6">
                         <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                            class="w-16 h-16 bg-teal-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-teal-500/30 transition-all">
+                            <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
                         </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">DALL-E</span>
+                        <span class="text-teal-300 font-semibold">Publicar un Prompt</span>
+                        <span class="text-teal-400/60 text-sm mt-1 text-center">Selecciona desde My Unit</span>
                     </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Ilustración Profesional</h3>
-                        <p class="text-teal-400 text-sm mb-2">Arte Digital</p>
-                        <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 1 día</p>
-                    </div>
-                </a>
-
-            </div>
-
-            <!-- Load More -->
-            <div class="text-center mt-12">
-                <button
-                    class="px-8 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium rounded-xl transition-colors">
-                    Cargar más prompts
                 </button>
+
             </div>
+
+            <!-- Paginación -->
+            <div id="pagination-container" class="mt-10"></div>
+
         </div>
     </main>
 
     <script src="js/sidebar.js"></script>
+    <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Paginación para mis prompts públicos
+        document.addEventListener('DOMContentLoaded', function () {
+            var pagination = new PromptHub.Pagination({
+                itemsPerPage: 8,
+                onPageChange: function (page, info) {
+                    console.log('Página:', page, info);
+                    // Cargar MIS prompts públicos desde Supabase
+                    // WHERE user_id = current_user AND is_public = true
+                }
+            });
+
+            // Si hay más de 8, inicializar paginación
+            var totalPublic = 3; // Esto vendrá de Supabase
+            if (totalPublic > 8) {
+                pagination.init(totalPublic, 'pagination-container');
+            }
+        });
+    </script>
+
 </body>
 
 </html>
