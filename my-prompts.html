@@ -14,6 +14,11 @@
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { 'sans': ['Inter', 'sans-serif'], 'mono': ['JetBrains Mono', 'monospace'] } } } }
     </script>
+    
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -70,57 +75,6 @@
                 </div>
             </div>
 
-            <!-- Carpetas -->
-            <div class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
-                    Carpetas
-                </h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                    <a href="#"
-                        class="flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl hover:border-indigo-500 transition-colors group">
-                        <svg class="w-12 h-12 text-indigo-400 mb-2 group-hover:scale-110 transition-transform"
-                            fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                        </svg>
-                        <span class="text-sm text-slate-300 text-center">Programación</span>
-                        <span class="text-xs text-slate-500">12 prompts</span>
-                    </a>
-                    <a href="#"
-                        class="flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl hover:border-violet-500 transition-colors group">
-                        <svg class="w-12 h-12 text-violet-400 mb-2 group-hover:scale-110 transition-transform"
-                            fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                        </svg>
-                        <span class="text-sm text-slate-300 text-center">Escritura</span>
-                        <span class="text-xs text-slate-500">8 prompts</span>
-                    </a>
-                    <a href="#"
-                        class="flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl hover:border-orange-500 transition-colors group">
-                        <svg class="w-12 h-12 text-orange-400 mb-2 group-hover:scale-110 transition-transform"
-                            fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                        </svg>
-                        <span class="text-sm text-slate-300 text-center">Arte Digital</span>
-                        <span class="text-xs text-slate-500">4 prompts</span>
-                    </a>
-                    <button id="new-folder-btn"
-                        class="flex flex-col items-center p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-xl hover:border-indigo-500 transition-colors group">
-                        <svg class="w-12 h-12 text-slate-500 mb-2 group-hover:text-indigo-400 group-hover:scale-110 transition-all"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span class="text-sm text-slate-500 group-hover:text-slate-300">Nueva Carpeta</span>
-                    </button>
-                </div>
-            </div>
-
             <!-- Todos los Prompts -->
             <div class="mb-8">
                 <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
@@ -132,165 +86,14 @@
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="prompts-grid">
-                    <!-- Los prompts se cargarán dinámicamente con paginación -->
-
-                    <!-- Ejemplo de cards -->
-                    <a href="edit-note.html?id=1"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert</h3>
-                            <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 días</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=2"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística</h3>
-                            <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 5 días</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=3"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
-                            <p class="text-violet-400 text-sm mb-2">Escritura</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 1 semana</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=4"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst</h3>
-                            <p class="text-blue-400 text-sm mb-2">Análisis</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 3 días</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=5"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
-                                Diffusion</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Fotorrealista</h3>
-                            <p class="text-orange-400 text-sm mb-2">Fotografía</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 1 día</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=6"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-teal-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">DALL-E</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Ilustración</h3>
-                            <p class="text-teal-400 text-sm mb-2">Arte Digital</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 4 días</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=7"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Code Reviewer</h3>
-                            <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 6 días</p>
-                        </div>
-                    </a>
-
-                    <a href="edit-note.html?id=8"
-                        class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px]">
-                        <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
-                            <div
-                                class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                            <span
-                                class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
-                        </div>
-                        <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Essay Writer</h3>
-                            <p class="text-violet-400 text-sm mb-2">Escritura</p>
-                            <p class="text-slate-500 text-xs mt-auto">Últ. mod: Hace 2 semanas</p>
-                        </div>
-                    </a>
+                    <!-- Los prompts se cargarán dinámicamente -->
+                    <div class="col-span-full text-center py-12 text-slate-500">
+                        <svg class="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Cargando biblioteca...
+                    </div>
                 </div>
             </div>
 
@@ -304,23 +107,294 @@
     <script src="js/sidebar.js"></script>
     <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
+    
     <script>
-        // Inicializar paginación
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ejemplo: 24 prompts totales
-            var totalPrompts = 24;
+        (async function() {
+            // Estado Global
+            let currentUser = null;
+            let currentCategoryFilter = null;
+            let currentPage = 1;
+            const itemsPerPage = 8;
+            let totalItems = 0;
 
-            var pagination = new PromptHub.Pagination({
-                itemsPerPage: 8,
-                onPageChange: function (page, info) {
-                    console.log('Cambiando a página:', page, info);
-                    // Aquí se cargarían los prompts desde Supabase
-                    // Por ahora es visual
+            // Inicializar
+            const checkSupabase = setInterval(async () => {
+                if (window.initSupabase) {
+                    clearInterval(checkSupabase);
+                    const supabase = window.initSupabase();
+                    await initPage(supabase);
                 }
-            });
+            }, 50);
 
-            pagination.init(totalPrompts, 'pagination-container');
-        });
+            async function initPage(supabase) {
+                // 1. Verificar Sesión & Perfil (Igual que Dashboard)
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    window.location.href = 'auth-login.html';
+                    return;
+                }
+                currentUser = session.user;
+
+                // Cargar perfil para el Sidebar
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                
+                // Notificar al Sidebar
+                if (window.PromptHub && window.PromptHub.User) {
+                    window.PromptHub.User.setUserData({
+                        email: session.user.email,
+                        username: profile?.username,
+                        avatar_url: profile?.avatar_url
+                    });
+                }
+
+                // 2. Cargar Carpetas (Conteos)
+                loadFolders(supabase);
+
+                // 3. Cargar Prompts Iniciales
+                loadPrompts(supabase);
+
+                // Event Listeners
+                setupSearch(supabase);
+            }
+
+            // --- CARPETAS / CATEGORÍAS ---
+            async function loadFolders(supabase) {
+                // Obtener conteo por categoría
+                // Nota: Supabase no tiene "GROUP BY" directo fácil en el cliente JS estándar sin RPC,
+                // así que haremos una consulta ligera de todos los IDs y categorías para contar localmente.
+                const { data: prompts } = await supabase
+                    .from('prompts')
+                    .select('category_id, categories(name, slug)')
+                    .eq('user_id', currentUser.id);
+
+                const counts = {};
+                if (prompts) {
+                    prompts.forEach(p => {
+                        const name = p.categories?.name || 'Sin Categoría';
+                        const id = p.category_id;
+                        if (!counts[id]) counts[id] = { name, count: 0, id };
+                        counts[id].count++;
+                    });
+                }
+
+                // Renderizar Carpetas
+                const container = document.createElement('div');
+                container.className = 'mb-8';
+                container.innerHTML = `
+                    <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                        Carpetas
+                    </h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4" id="folders-grid"></div>
+                `;
+                
+                // Insertar antes del grid de prompts
+                const promptsSection = document.querySelector('.mb-8'); // El div de "Todos los Prompts"
+                promptsSection.parentNode.insertBefore(container, promptsSection);
+
+                const grid = document.getElementById('folders-grid');
+                
+                // Botón "Ver Todo"
+                grid.innerHTML = `
+                    <button onclick="filterByCategory(null)" class="folder-btn flex flex-col items-center p-4 bg-slate-800 border ${!currentCategoryFilter ? 'border-indigo-500' : 'border-slate-700'} rounded-xl hover:border-indigo-500 transition-colors group">
+                        <div class="w-12 h-12 flex items-center justify-center text-indigo-400 mb-2 group-hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                        </div>
+                        <span class="text-sm text-slate-300 text-center">Ver Todo</span>
+                        <span class="text-xs text-slate-500">${prompts?.length || 0} prompts</span>
+                    </button>
+                `;
+
+                // Mapa de colores para carpetas
+                const catColors = {
+                    'Programación': 'text-indigo-400 hover:border-indigo-500',
+                    'Escritura': 'text-violet-400 hover:border-violet-500',
+                    'Arte Digital': 'text-orange-400 hover:border-orange-500',
+                    'Diseño': 'text-pink-400 hover:border-pink-500',
+                    'Análisis': 'text-blue-400 hover:border-blue-500',
+                    'Fotografía': 'text-emerald-400 hover:border-emerald-500',
+                    'Productividad': 'text-orange-400 hover:border-orange-500' // Restaurado Naranja
+                };
+
+                Object.values(counts).forEach(cat => {
+                    if (!cat.id) return;
+                    const colorClass = catColors[cat.name] || 'text-slate-400 hover:border-indigo-500';
+                    const iconColor = colorClass.split(' ')[0]; // Extraer solo el color de texto para el icono
+                    
+                    grid.innerHTML += `
+                        <button onclick="filterByCategory(${cat.id})" class="folder-btn flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl ${colorClass.split(' ')[1]} transition-colors group">
+                            <div class="w-12 h-12 flex items-center justify-center ${iconColor} mb-2 group-hover:scale-110 transition-transform">
+                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                            </div>
+                            <span class="text-sm text-slate-300 text-center truncate w-full">${cat.name}</span>
+                            <span class="text-xs text-slate-500">${cat.count} prompts</span>
+                        </button>
+                    `;
+                });
+
+                // Exponer funcion global
+                window.filterByCategory = (id) => {
+                    currentCategoryFilter = id;
+                    currentPage = 1;
+                    loadPrompts(supabase);
+                    
+                    // Actualizar estilos activos
+                    document.querySelectorAll('.folder-btn').forEach(btn => btn.classList.remove('border-indigo-500'));
+                    event.currentTarget.classList.add('border-indigo-500');
+                };
+            }
+
+            // --- PROMPTS Y PAGINACIÓN ---
+            async function loadPrompts(supabase, searchTerm = '') {
+                const grid = document.getElementById('prompts-grid');
+                const countSpan = document.getElementById('total-count');
+                
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><svg class="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Cargando...</div>';
+
+                try {
+                    let query = supabase
+                        .from('prompts')
+                        .select(`
+                            id, title, updated_at, description,
+                            categories (name),
+                            ai_types (name, slug, icon_svg)
+                        `, { count: 'exact' })
+                        .eq('user_id', currentUser.id)
+                        .order('updated_at', { ascending: false });
+
+                    // Filtros
+                    if (currentCategoryFilter) {
+                        query = query.eq('category_id', currentCategoryFilter);
+                    }
+                    if (searchTerm) {
+                        query = query.ilike('title', `%${searchTerm}%`);
+                    }
+
+                    // Paginación
+                    const from = (currentPage - 1) * itemsPerPage;
+                    const to = from + itemsPerPage - 1;
+                    query = query.range(from, to);
+
+                    const { data: prompts, count, error } = await query;
+
+                    if (error) throw error;
+
+                    totalItems = count;
+                    countSpan.textContent = totalItems;
+
+                    renderGrid(prompts);
+                    renderPagination();
+
+                } catch (e) {
+                    console.error('Error:', e);
+                    grid.innerHTML = `<div class="col-span-full text-red-400 text-center">Error al cargar: ${e.message}</div>`;
+                }
+            }
+
+            function renderGrid(prompts) {
+                const grid = document.getElementById('prompts-grid');
+                grid.innerHTML = '';
+
+                if (prompts.length === 0) {
+                    grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12">No se encontraron prompts.</div>';
+                    return;
+                }
+
+                const colors = {
+                    'chatgpt': 'bg-emerald-500', 'midjourney': 'bg-indigo-500', 'claude': 'bg-orange-500',
+                    'gemini': 'bg-blue-500', 'dalle': 'bg-teal-500', 'stable-diffusion': 'bg-orange-600',
+                    'deepseek': 'bg-blue-700', 'grok': 'bg-gray-900', 'copilot': 'bg-sky-600', 'default': 'bg-slate-700'
+                };
+
+                prompts.forEach(p => {
+                    const card = document.createElement('a');
+                    card.href = `edit-note.html?id=${p.id}`;
+                    card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
+                    
+                    const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
+                    const bgColor = colors[aiSlug] || colors['default'];
+                    const aiName = p.ai_types?.name || 'IA';
+                    const catName = p.categories?.name || 'General';
+                    
+                    // ICONO IDENTICO AL DASHBOARD (Tamaño w-12 h-12)
+                    let iconSvg = p.ai_types?.icon_svg || '<svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
+                    if (iconSvg.includes('<svg')) {
+                        if (iconSvg.includes('w-')) {
+                            iconSvg = iconSvg.replace(/w-\d+/, 'w-12').replace(/h-\d+/, 'h-12');
+                        } else {
+                            iconSvg = iconSvg.replace('<svg', '<svg class="w-12 h-12"');
+                        }
+                    }
+
+                    const days = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
+                    const dateText = days === 0 ? 'Hoy' : `Hace ${days} días`;
+
+                    card.innerHTML = `
+                        <div class="h-[88px] ${bgColor} flex items-center justify-center relative group-hover:opacity-90 transition-opacity">
+                            <!-- Diseño Glass Identico al Dashboard -->
+                            <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white shadow-sm">
+                                ${iconSvg}
+                            </div>
+                            <span class="absolute top-2 right-2 px-2 py-0.5 bg-black/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium capitalize">
+                                ${aiName}
+                            </span>
+                        </div>
+                        <div class="p-4 font-mono h-[132px] flex flex-col">
+                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">${p.title}</h3>
+                            <p class="text-indigo-400 text-sm mb-2 truncate">${catName}</p>
+                            <p class="text-slate-500 text-xs mt-auto">Editado: ${dateText}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            function renderPagination() {
+                const container = document.getElementById('pagination-container'); // Necesitas agregar este div al HTML si no existe
+                if (!container) return; // Si no hay contenedor, salimos (o lo creamos dinámicamente)
+                
+                // Crear contenedor si falta (fallback)
+                if (!document.getElementById('pagination-controls')) {
+                    const controls = document.createElement('div');
+                    controls.id = 'pagination-controls';
+                    controls.className = 'flex justify-center gap-4 mt-8';
+                    container.appendChild(controls);
+                }
+                const controls = document.getElementById('pagination-controls');
+                
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                
+                controls.innerHTML = `
+                    <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-300 disabled:opacity-50 hover:bg-slate-700">Anterior</button>
+                    <span class="px-4 py-2 text-slate-400">Página ${currentPage} de ${totalPages || 1}</span>
+                    <button ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-300 disabled:opacity-50 hover:bg-slate-700">Siguiente</button>
+                `;
+
+                window.changePage = (newPage) => {
+                    currentPage = newPage;
+                    loadPrompts(window.initSupabase());
+                };
+            }
+
+            function setupSearch(supabase) {
+                const searchInput = document.getElementById('search-input');
+                let timeout = null;
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => {
+                            currentPage = 1;
+                            loadPrompts(supabase, e.target.value);
+                        }, 300);
+                    });
+                }
+            }
+
+        })();
     </script>
 
 </body>
