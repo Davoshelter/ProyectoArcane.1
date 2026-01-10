@@ -97,8 +97,45 @@
 
                     // CARGAR PROMPTS RECIENTES
                     loadRecentPrompts(supabase, session.user.id);
+
+                    // CARGAR OPCIONES DEL MODAL
+                    loadSelectOptions(supabase);
+
+                    // CONFIGURAR FORMULARIO DE CREACIÓN
+                    initCreateForm(supabase, session.user.id);
                 }
             }, 50); // Revisar cada 50ms
+
+            // Cargar Categorías e IAs para el formulario
+            async function loadSelectOptions(supabase) {
+                console.log('🔍 Cargando opciones de selects...');
+                try {
+                    // Categorías
+                    const { data: cats, error: catError } = await supabase.from('categories').select('id, name');
+                    console.log('📂 Categorías:', cats, 'Error:', catError); // DEBUG
+
+                    if (cats && cats.length > 0) {
+                        const select = document.getElementById('note-category');
+                        select.innerHTML = '<option value="">Seleccionar categoría</option>';
+                        cats.forEach(c => select.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+                    } else if (cats && cats.length === 0) {
+                        console.warn('⚠️ La tabla categories está vacía.');
+                    }
+
+                    // IAs
+                    const { data: ais, error: aiError } = await supabase.from('ai_types').select('id, name');
+                    console.log('🤖 IAs:', ais, 'Error:', aiError); // DEBUG
+
+                    if (ais && ais.length > 0) {
+                        const select = document.getElementById('note-ai');
+                        select.innerHTML = '<option value="">Seleccionar IA</option>';
+                        ais.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name}</option>`);
+                    } else if (ais && ais.length === 0) {
+                        console.warn('⚠️ La tabla ai_types está vacía.');
+                    }
+
+                } catch(e) { console.error('Error loading options', e); }
+            }
 
             // Función para cargar prompts
             async function loadRecentPrompts(supabase, userId) {
@@ -106,90 +143,154 @@
                 const grid = document.getElementById('recent-prompts-grid');
                 if (!grid) return;
 
-                // Mantener solo el botón de crear
                 const createBtn = grid.firstElementChild.outerHTML;
-                
-                // Mostrar Loader
                 grid.innerHTML = createBtn + '<div class="col-span-full text-center text-slate-500 py-10 animate-pulse">Cargando tus prompts...</div>';
 
+                // JOIN con tablas relacionadas
                 const { data: prompts, error } = await supabase
                     .from('prompts')
                     .select(`
-                        id, 
-                        title, 
-                        category_id,
-                        ai_type_id,
-                        updated_at
+                        id, title, updated_at, description,
+                        categories (name),
+                        ai_types (name, slug, icon_svg)
                     `)
                     .eq('user_id', userId)
                     .order('updated_at', { ascending: false })
                     .limit(6);
 
                 if (error) {
-                    console.error('Error cargando prompts:', error);
-                    grid.innerHTML = createBtn + `<div class="col-span-full text-red-400 text-center">Error al cargar: ${error.message}</div>`;
+                    console.error('Error:', error);
+                    grid.innerHTML = createBtn; // Fallback silencioso
                     return;
                 }
 
-                // Limpiar loader
                 grid.innerHTML = createBtn;
 
                 if (!prompts || prompts.length === 0) {
-                    // Mostrar mensaje de vacío
                     const emptyState = document.createElement('div');
-                    emptyState.className = 'col-span-1 sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center text-slate-500 py-10 border-2 border-dashed border-slate-700 rounded-xl';
-                    emptyState.innerHTML = `
-                        <svg class="w-12 h-12 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                        <p>No tienes prompts guardados aún.</p>
-                        <p class="text-sm">¡Crea el primero ahora!</p>
-                    `;
+                    emptyState.className = 'col-span-full flex flex-col items-center justify-center text-slate-500 py-10 border-2 border-dashed border-slate-700 rounded-xl';
+                    emptyState.innerHTML = '<p>No tienes prompts guardados aún.</p>';
                     grid.appendChild(emptyState);
                     return;
                 }
 
-                // Si hay prompts, obtener datos de categorías/IAs (podríamos hacerlo con join, pero a veces falla si RLS está estricto en tablas referenciadas)
-                // Por simplicidad, usaremos valores por defecto o IDs por ahora
-                
-                prompts.forEach(prompt => {
+                // Mapa de colores por slug de IA (para el fondo de la tarjeta)
+                const colors = {
+                    'chatgpt': 'bg-emerald-500',
+                    'midjourney': 'bg-indigo-500',
+                    'claude': 'bg-orange-500',
+                    'gemini': 'bg-blue-500',
+                    'stable-diffusion': 'bg-orange-600',
+                    'dalle': 'bg-teal-500',
+                    'deepseek': 'bg-blue-700', // Nuevo: Azul profundo
+                    'grok': 'bg-gray-900',     // Nuevo: Oscuro
+                    'copilot': 'bg-sky-600',   // Nuevo: Azul cielo Microsoft
+                    'default': 'bg-slate-700'
+                };
+
+                prompts.forEach(p => {
                     const card = document.createElement('a');
-                    card.href = `edit-note.html?id=${prompt.id}`;
-                    card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px] animate-fadeIn';
+                    card.href = `edit-note.html?id=${p.id}`;
+                    card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
                     
-                    // TODO: Mapear IDs a nombres reales si es necesario
-                    const aiName = 'AI Prompt'; 
-                    const categoryName = 'General';
+                    const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
+                    const bgColor = colors[aiSlug] || colors['default'];
+                    const aiName = p.ai_types?.name || 'IA';
+                    const catName = p.categories?.name || 'General';
                     
-                    // Formatear fecha relativa
-                    const date = new Date(prompt.updated_at);
-                    const now = new Date();
-                    const diffTime = Math.abs(now - date);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                    let dateText = diffDays === 1 ? 'Ayer' : `Hace ${diffDays} días`;
-                    if (diffDays === 0) dateText = 'Hoy';
+                    // Icono: Usar de la BD tal cual
+                    let iconSvg = p.ai_types?.icon_svg || '<svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
+                    
+                    // Forzar tamaño w-12 h-12 (más grande)
+                    if (iconSvg.includes('<svg')) {
+                        // Reemplazar clases de tamaño existentes o inyectar nuevas
+                        if (iconSvg.includes('w-')) {
+                            iconSvg = iconSvg.replace(/w-\d+/, 'w-12').replace(/h-\d+/, 'h-12');
+                        } else {
+                            iconSvg = iconSvg.replace('<svg', '<svg class="w-12 h-12"');
+                        }
+                    }
+
+                    // Fecha relativa simple
+                    const days = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
+                    const dateText = days === 0 ? 'Hoy' : `Hace ${days} días`;
 
                     card.innerHTML = `
-                        <div class="h-[88px] bg-slate-700 flex items-center justify-center relative group-hover:bg-slate-600 transition-colors">
-                            <div class="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl">
-                                📝
+                        <div class="h-[88px] ${bgColor} flex items-center justify-center relative group-hover:opacity-90 transition-opacity">
+                            <!-- Icono DIRECTO (Sin fondo de cristal, tamaño grande) -->
+                            <div class="flex items-center justify-center text-white drop-shadow-sm">
+                                ${iconSvg}
                             </div>
-                            <span class="absolute top-2 right-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">
+                            <span class="absolute top-2 right-2 px-2 py-0.5 bg-black/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium capitalize">
                                 ${aiName}
                             </span>
                         </div>
                         <div class="p-4 font-mono h-[132px] flex flex-col">
-                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">${prompt.title}</h3>
-                            <p class="text-indigo-400 text-sm mb-2">${categoryName}</p>
-                            <p class="text-slate-500 text-xs mt-auto flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                ${dateText}
-                            </p>
+                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">${p.title}</h3>
+                            <p class="text-indigo-400 text-sm mb-2 truncate">${catName}</p>
+                            <p class="text-slate-500 text-xs mt-auto">${dateText}</p>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
             }
-        })();
-    </script>
+
+            // Función para inicializar el formulario de creación (Restaurada)
+            function initCreateForm(supabase, userId) {
+                const createForm = document.getElementById('create-form');
+                if (!createForm) return;
+
+                // Remover listeners anteriores para evitar duplicados
+                const newForm = createForm.cloneNode(true);
+                createForm.parentNode.replaceChild(newForm, createForm);
+
+                newForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('note-name').value;
+                    const categoryId = document.getElementById('note-category').value;
+                    const aiTypeId = document.getElementById('note-ai').value;
+                    const submitBtn = newForm.querySelector('button[type="submit"]');
+                    const originalBtnContent = submitBtn.innerHTML;
+
+                    if (!categoryId || !aiTypeId) {
+                        alert('Por favor selecciona una categoría y una IA');
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Creando...';
+
+                    try {
+                        console.log('📡 Guardando nuevo prompt...');
+                        const { data, error } = await supabase
+                            .from('prompts')
+                            .insert([{ 
+                                user_id: userId,
+                                title: name,
+                                content: '', 
+                                category_id: parseInt(categoryId),
+                                ai_type_id: parseInt(aiTypeId),
+                                description: '',
+                                is_public: false
+                            }])
+                            .select()
+                            .single();
+
+                        if (error) throw error;
+
+                        console.log('✅ Prompt creado:', data);
+                        window.location.href = `edit-note.html?id=${data.id}`;
+
+                    } catch (error) {
+                        console.error('❌ Error creando prompt:', error);
+                        if (error) console.log('🔍 Detalles:', error);
+                        alert(`Error: ${error.message || 'Error desconocido'}`);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnContent;
+                    }
+                });
+            }
         })();
     </script>
     <link rel="stylesheet" href="css/styles.css">
@@ -328,10 +429,10 @@
     <script src="js/main.js"></script>
     <script>
         // Modal Logic
-        var createBtn = document.getElementById('create-new-btn');
         var modal = document.getElementById('create-modal');
         var closeModalBtn = document.getElementById('close-modal-btn');
         var createForm = document.getElementById('create-form');
+        var grid = document.getElementById('recent-prompts-grid');
 
         function openModal() {
             modal.classList.remove('hidden');
@@ -343,38 +444,20 @@
             modal.classList.remove('flex');
         }
 
-        if (createBtn) createBtn.addEventListener('click', openModal);
+        // Delegación de Eventos para el botón de crear (porque se recrea dinámicamente)
+        if (grid) {
+            grid.addEventListener('click', function(e) {
+                const btn = e.target.closest('#create-new-btn');
+                if (btn) {
+                    openModal();
+                }
+            });
+        }
+
         if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', function (e) {
             if (e.target === modal) closeModal();
         });
-
-        // Create Form Submit
-        if (createForm) {
-            createForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var name = document.getElementById('note-name').value;
-                var category = document.getElementById('note-category').value;
-                var ai = document.getElementById('note-ai').value;
-
-                // Crear nuevo prompt con ID único
-                var newId = 'new_' + Date.now();
-
-                // Guardar en localStorage (temporal, luego Supabase)
-                var newPrompt = {
-                    id: newId,
-                    title: name,
-                    category: category,
-                    ai_type: ai,
-                    content: '',
-                    created_at: new Date().toISOString()
-                };
-                localStorage.setItem('prompt_' + newId, JSON.stringify(newPrompt));
-
-                // Redireccionar al editor
-                window.location.href = 'edit-note.html?id=' + newId;
-            });
-        }
     </script>
 
 </body>
