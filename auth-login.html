@@ -30,6 +30,10 @@
         }
     </script>
 
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -196,6 +200,64 @@
 
     <!-- Scripts -->
     <script src="js/main.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.querySelector('form');
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // 1. Obtener datos
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // 2. Feedback visual (loading)
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Iniciando sesión...
+                `;
+
+                try {
+                    // 3. Verificar cliente (Intentar inicializar si no existe)
+                    const supabase = window.initSupabase();
+
+                    if (!supabase) {
+                        throw new Error('No se pudo conectar con Supabase. Verifica tu conexión a internet o recarga la página.');
+                    }
+
+                    console.log('📡 Enviando datos a Supabase...');
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password,
+                    });
+
+                    if (error) throw error;
+
+                    // 4. Éxito
+                    console.log('Login exitoso:', data);
+                    // Guardar sesión (opcional, Supabase lo hace auto)
+                    // Redirigir al dashboard
+                    window.location.href = 'dashboard.html';
+
+                } catch (error) {
+                    console.error('Error de login:', error);
+                    // Mostrar error al usuario
+                    alert(`Error: ${error.message || 'Credenciales inválidas'}`);
+                    
+                    // Resetear botón
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            });
+        });
+    </script>
 
 </body>
 
