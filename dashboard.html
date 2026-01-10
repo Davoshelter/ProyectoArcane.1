@@ -23,6 +23,175 @@
             },
         }
     </script>
+    
+    <!-- Supabase SDK & Auth Guard -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+        (async function() {
+            console.log('🛡️ Dashboard: Iniciando verificación de sesión...');
+            
+            // Esperar a que initSupabase esté disponible
+            const checkSupabase = setInterval(async () => {
+                if (window.initSupabase) {
+                    clearInterval(checkSupabase);
+                    const supabase = window.initSupabase();
+                    
+                    if (!supabase) {
+                        console.error('❌ Supabase failed to init in Dashboard');
+                        return;
+                    }
+
+                    // Verificar Sesión
+                    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+                    if (sessionError || !session) {
+                        console.warn('⚠️ No hay sesión activa. Redirigiendo...');
+                        window.location.href = 'auth-login.html';
+                        return;
+                    }
+
+                    console.log('✅ Sesión activa para:', session.user.email);
+                    window.currentUser = session.user; // Guardar usuario globalmente
+                    
+                    // Cargar Perfil
+                    console.log('🔍 Buscando perfil en base de datos...');
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', session.user.id)
+                        .single();
+                        
+                    if (profileError) {
+                        console.error('❌ Error cargando perfil:', profileError.message);
+                        // Fallback: crear un perfil temporal en memoria si falla la BD
+                        window.currentProfile = {
+                            username: session.user.user_metadata.full_name || session.user.email.split('@')[0],
+                            email: session.user.email,
+                            avatar_url: null
+                        };
+                    } else {
+                        window.currentProfile = profile;
+                        console.log('👤 Perfil cargado correctamente:', profile);
+                    }
+
+                    // NOTIFICAR A TODOS LOS COMPONENTES (Sidebar, etc.)
+                    console.log('📢 Disparando evento userReady...');
+                    window.dispatchEvent(new CustomEvent('userReady', {
+                        detail: {
+                            session: session.user,
+                            profile: window.currentProfile
+                        }
+                    }));
+
+                    // Actualizar header móvil directamente (por si acaso)
+                    const mobileAvatar = document.querySelector('header .bg-gradient-to-br');
+                    if (mobileAvatar) {
+                        const initial = (window.currentProfile?.username || session.user.email).charAt(0).toUpperCase();
+                        if (window.currentProfile?.avatar_url) {
+                            mobileAvatar.innerHTML = `<img src="${window.currentProfile.avatar_url}" class="w-full h-full object-cover rounded-full">`;
+                        } else {
+                            mobileAvatar.textContent = initial;
+                        }
+                    }
+
+                    // CARGAR PROMPTS RECIENTES
+                    loadRecentPrompts(supabase, session.user.id);
+                }
+            }, 50); // Revisar cada 50ms
+
+            // Función para cargar prompts
+            async function loadRecentPrompts(supabase, userId) {
+                console.log('📚 Cargando prompts recientes...');
+                const grid = document.getElementById('recent-prompts-grid');
+                if (!grid) return;
+
+                // Mantener solo el botón de crear
+                const createBtn = grid.firstElementChild.outerHTML;
+                
+                // Mostrar Loader
+                grid.innerHTML = createBtn + '<div class="col-span-full text-center text-slate-500 py-10 animate-pulse">Cargando tus prompts...</div>';
+
+                const { data: prompts, error } = await supabase
+                    .from('prompts')
+                    .select(`
+                        id, 
+                        title, 
+                        category_id,
+                        ai_type_id,
+                        updated_at
+                    `)
+                    .eq('user_id', userId)
+                    .order('updated_at', { ascending: false })
+                    .limit(6);
+
+                if (error) {
+                    console.error('Error cargando prompts:', error);
+                    grid.innerHTML = createBtn + `<div class="col-span-full text-red-400 text-center">Error al cargar: ${error.message}</div>`;
+                    return;
+                }
+
+                // Limpiar loader
+                grid.innerHTML = createBtn;
+
+                if (!prompts || prompts.length === 0) {
+                    // Mostrar mensaje de vacío
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'col-span-1 sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center text-slate-500 py-10 border-2 border-dashed border-slate-700 rounded-xl';
+                    emptyState.innerHTML = `
+                        <svg class="w-12 h-12 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        <p>No tienes prompts guardados aún.</p>
+                        <p class="text-sm">¡Crea el primero ahora!</p>
+                    `;
+                    grid.appendChild(emptyState);
+                    return;
+                }
+
+                // Si hay prompts, obtener datos de categorías/IAs (podríamos hacerlo con join, pero a veces falla si RLS está estricto en tablas referenciadas)
+                // Por simplicidad, usaremos valores por defecto o IDs por ahora
+                
+                prompts.forEach(prompt => {
+                    const card = document.createElement('a');
+                    card.href = `edit-note.html?id=${prompt.id}`;
+                    card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px] animate-fadeIn';
+                    
+                    // TODO: Mapear IDs a nombres reales si es necesario
+                    const aiName = 'AI Prompt'; 
+                    const categoryName = 'General';
+                    
+                    // Formatear fecha relativa
+                    const date = new Date(prompt.updated_at);
+                    const now = new Date();
+                    const diffTime = Math.abs(now - date);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                    let dateText = diffDays === 1 ? 'Ayer' : `Hace ${diffDays} días`;
+                    if (diffDays === 0) dateText = 'Hoy';
+
+                    card.innerHTML = `
+                        <div class="h-[88px] bg-slate-700 flex items-center justify-center relative group-hover:bg-slate-600 transition-colors">
+                            <div class="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl">
+                                📝
+                            </div>
+                            <span class="absolute top-2 right-2 px-2 py-0.5 bg-black/40 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">
+                                ${aiName}
+                            </span>
+                        </div>
+                        <div class="p-4 font-mono h-[132px] flex flex-col">
+                            <h3 class="text-base font-bold text-slate-100 mb-1 truncate">${prompt.title}</h3>
+                            <p class="text-indigo-400 text-sm mb-2">${categoryName}</p>
+                            <p class="text-slate-500 text-xs mt-auto flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                ${dateText}
+                            </p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        })();
+    </script>
+        })();
+    </script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -89,132 +258,7 @@
                     </div>
                 </button>
 
-                <!-- Los prompts recientes se cargarán aquí dinámicamente -->
-                <!-- Por ahora mostramos ejemplos estáticos (máximo 6) -->
-
-                <!-- CARD 1 - ChatGPT (Emerald) -->
-                <a href="edit-note.html?id=1"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert Assistant</h3>
-                        <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                        <p class="text-slate-500 text-xs mt-auto">Hace 2 horas</p>
-                    </div>
-                </a>
-
-                <!-- CARD 2 - MidJourney (Indigo) -->
-                <a href="edit-note.html?id=2"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
-                        <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
-                        <p class="text-slate-500 text-xs mt-auto">Ayer</p>
-                    </div>
-                </a>
-
-                <!-- CARD 3 - Stable Diffusion (Orange) -->
-                <a href="edit-note.html?id=3"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
-                            Diffusion</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador Fotorrealista</h3>
-                        <p class="text-orange-400 text-sm mb-2">Fotografía</p>
-                        <p class="text-slate-500 text-xs mt-auto">Hace 3 días</p>
-                    </div>
-                </a>
-
-                <!-- CARD 4 - Claude (Violet) -->
-                <a href="edit-note.html?id=4"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="12" r="10" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
-                        <p class="text-violet-400 text-sm mb-2">Escritura</p>
-                        <p class="text-slate-500 text-xs mt-auto">Hace 5 días</p>
-                    </div>
-                </a>
-
-                <!-- CARD 5 - Gemini (Blue) -->
-                <a href="edit-note.html?id=5"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
-                        <p class="text-blue-400 text-sm mb-2">Análisis</p>
-                        <p class="text-slate-500 text-xs mt-auto">Hace 1 semana</p>
-                    </div>
-                </a>
-
-                <!-- CARD 6 - DALL-E (Teal) -->
-                <a href="edit-note.html?id=6"
-                    class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 h-[220px]">
-                    <div class="h-[88px] bg-teal-500 flex items-center justify-center relative">
-                        <div
-                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">DALL-E</span>
-                    </div>
-                    <div class="p-4 font-mono h-[132px] flex flex-col">
-                        <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Ilustración Creativa</h3>
-                        <p class="text-teal-400 text-sm mb-2">Arte Digital</p>
-                        <p class="text-slate-500 text-xs mt-auto">Hace 2 semanas</p>
-                    </div>
-                </a>
+                <!-- Los prompts se cargarán aquí dinámicamente vía JS -->
 
             </div>
         </div>
