@@ -140,19 +140,19 @@
                     <!-- AI Icon + Info -->
                     <div class="flex items-center gap-3">
                         <div id="prompt-icon"
-                            class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
+                            class="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                         </div>
                         <div class="hidden sm:block">
-                            <h1 id="prompt-title-display" class="font-bold text-slate-100">Debug Expert Assistant</h1>
+                            <h1 id="prompt-title-display" class="font-bold text-slate-100">Cargando...</h1>
                             <div class="flex items-center gap-2 text-sm">
                                 <span id="prompt-category-badge"
-                                    class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full">Programación</span>
+                                    class="px-2 py-0.5 bg-slate-700 text-slate-400 text-xs font-medium rounded-full">...</span>
                                 <span class="text-slate-500">•</span>
-                                <span id="prompt-last-edit" class="text-slate-500">Última edición hace 2 días</span>
+                                <span id="prompt-last-edit" class="text-slate-500">...</span>
                             </div>
                         </div>
                     </div>
@@ -160,6 +160,16 @@
 
                 <!-- Right: Actions (TODOS EN EL HEADER) -->
                 <div class="flex items-center gap-2">
+                    <!-- Eliminar -->
+                    <button id="delete-btn"
+                        class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-xl transition-colors"
+                        title="Eliminar Prompt">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+
                     <!-- Historial -->
                     <button id="history-btn"
                         class="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-xl transition-colors"
@@ -220,23 +230,13 @@
 
                 <!-- Title -->
                 <div class="mb-6">
-                    <input type="text" id="prompt-title" value="Prompt para depurar código de forma eficiente"
+                    <input type="text" id="prompt-title" value=""
                         placeholder="Título descriptivo del prompt..."
                         class="w-full bg-transparent border-none text-2xl lg:text-3xl font-bold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-0">
                 </div>
 
                 <!-- Tags -->
                 <div class="flex flex-wrap gap-2 mb-6" id="tags-container">
-                    <span
-                        class="tag-item px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 flex items-center gap-2">
-                        #debugging
-                        <button class="text-slate-500 hover:text-red-400 remove-tag">×</button>
-                    </span>
-                    <span
-                        class="tag-item px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 flex items-center gap-2">
-                        #python
-                        <button class="text-slate-500 hover:text-red-400 remove-tag">×</button>
-                    </span>
                     <button id="add-tag-btn"
                         class="px-3 py-1.5 border border-dashed border-slate-600 rounded-full text-sm text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-colors">
                         + Añadir tag
@@ -338,23 +338,7 @@
                         <div class="code-block-content">
                             <textarea id="prompt-content"
                                 class="w-full min-h-[300px] bg-transparent font-mono text-sm text-slate-300 leading-relaxed resize-none focus:outline-none"
-                                placeholder="Escribe tu prompt aquí... Usa /code para insertar un bloque de código."># Debug Expert Assistant
-
-Actúa como un experto senior en debugging y resolución de problemas de código.
-
-Tu objetivo es:
-1. Analizar el código proporcionado en busca de errores
-2. Identificar la causa raíz del problema
-3. Proporcionar una solución paso a paso
-4. Explicar por qué ocurrió el error
-
-Formato de respuesta:
-- Diagnóstico: Breve descripción del problema
-- Solución: Código corregido con comentarios
-- Prevención: Tips para evitar errores similares
-
-// Pega tu código con error a continuación:
-[TU_CODIGO_AQUI]</textarea>
+                                placeholder="Escribe tu prompt aquí... Usa /code para insertar un bloque de código."></textarea>
                         </div>
                     </div>
                 </div>
@@ -364,7 +348,7 @@ Formato de respuesta:
                     <label class="block text-sm font-medium text-slate-400 mb-2">Notas adicionales</label>
                     <textarea id="prompt-notes"
                         placeholder="Añade notas sobre cuándo usar este prompt, variaciones, etc..." rows="3"
-                        class="w-full bg-transparent border-none text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-0 resize-none">Funciona mejor con errores de Python y JavaScript. Para errores de compilación, especificar el lenguaje al inicio.</textarea>
+                        class="w-full bg-transparent border-none text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-0 resize-none"></textarea>
                 </div>
 
             </div>
@@ -511,10 +495,33 @@ Formato de respuesta:
         </div>
     </div>
 
+    <!-- MODAL: Eliminar -->
+    <div id="delete-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+            <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-100 mb-2">¿Eliminar este prompt?</h3>
+            <p class="text-slate-400 mb-6">Esta acción no se puede deshacer. El prompt y todo su historial se perderán.</p>
+            <div class="flex gap-3 justify-center">
+                <button id="cancel-delete-btn"
+                    class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-xl transition-colors">
+                    Cancelar
+                </button>
+                <button id="confirm-delete-btn"
+                    class="px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-red-500/25">
+                    Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/sidebar.js"></script>
-    <script src="js/editor.js"></script>
-    <script src="js/version-history.js"></script>
+    <script src="js/editor-complete.js"></script>
     <script src="js/main.js"></script>
 </body>
 
