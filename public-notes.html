@@ -231,28 +231,17 @@
         </div>
     </main>
 
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Scripts -->
+    <script src="js/supabase-client.js"></script>
     <script src="js/sidebar.js"></script>
     <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
-    <script>
-        // Paginación para mis prompts públicos
-        document.addEventListener('DOMContentLoaded', function () {
-            var pagination = new PromptHub.Pagination({
-                itemsPerPage: 8,
-                onPageChange: function (page, info) {
-                    console.log('Página:', page, info);
-                    // Cargar MIS prompts públicos desde Supabase
-                    // WHERE user_id = current_user AND is_public = true
-                }
-            });
-
-            // Si hay más de 8, inicializar paginación
-            var totalPublic = 3; // Esto vendrá de Supabase
-            if (totalPublic > 8) {
-                pagination.init(totalPublic, 'pagination-container');
-            }
-        });
-    </script>
+    <script src="js/data-service.js"></script>
+    <script src="js/prompt-card.js"></script>
+    <script src="js/pages/public-notes-page.js"></script>
 
 </body>
 

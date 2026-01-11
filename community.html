@@ -116,26 +116,15 @@
             </div>
         </div>
 
-        <!-- Filter Pills -->
+        <!-- Filter Pills (Dynamic) -->
         <div class="flex flex-wrap justify-center gap-3 mb-8" id="category-filters">
-            <button
-                class="filter-btn active px-5 py-2.5 bg-indigo-500 text-white rounded-full text-sm font-medium transition-all"
-                data-category="all">Todos</button>
-            <button
-                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
-                data-category="programacion">💻 Programación</button>
-            <button
-                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
-                data-category="arte">🎨 Arte Digital</button>
-            <button
-                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
-                data-category="escritura">✍️ Escritura</button>
-            <button
-                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
-                data-category="fotografia">📷 Fotografía</button>
-            <button
-                class="filter-btn px-5 py-2.5 bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 rounded-full text-sm font-medium transition-all"
-                data-category="analisis">📊 Análisis</button>
+            <!-- Loading placeholder -->
+            <div class="animate-pulse flex gap-3">
+                <div class="bg-slate-700 rounded-full w-20 h-10"></div>
+                <div class="bg-slate-700 rounded-full w-28 h-10"></div>
+                <div class="bg-slate-700 rounded-full w-24 h-10"></div>
+                <div class="bg-slate-700 rounded-full w-24 h-10"></div>
+            </div>
         </div>
 
         <!-- Resultados Counter -->
@@ -151,199 +140,41 @@
             </select>
         </div>
 
-        <!-- Prompts Grid - TODOS los prompts públicos (solo lectura) -->
+        <!-- Prompts Grid - Dynamic (cargado desde Supabase) -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="prompts-grid">
-
-            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 h-[260px] cursor-pointer"
-                data-prompt-id="1">
-                <div class="h-[88px] bg-emerald-500 flex items-center justify-center relative">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" />
-                        </svg>
-                    </div>
-                    <span
-                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">ChatGPT</span>
-                </div>
-                <div class="p-4 font-mono h-[172px] flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Debug Expert Assistant</h3>
-                    <p class="text-emerald-400 text-sm mb-2">Programación</p>
-                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Prompt para depurar código de forma eficiente
-                        con explicaciones paso a paso...</p>
-                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
-                        <span class="text-slate-500 text-xs">Por @developer_pro</span>
-                        <span class="text-slate-500 text-xs flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            234
-                        </span>
-                    </div>
+            <!-- Loading skeleton -->
+            <div class="animate-pulse rounded-xl border border-slate-700 bg-slate-800 overflow-hidden h-[260px]">
+                <div class="h-[88px] bg-slate-700"></div>
+                <div class="p-4">
+                    <div class="h-4 bg-slate-700 rounded w-3/4 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-1/2 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-full"></div>
                 </div>
             </div>
-
-            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 h-[260px] cursor-pointer"
-                data-prompt-id="2">
-                <div class="h-[88px] bg-indigo-500 flex items-center justify-center relative">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z" />
-                        </svg>
-                    </div>
-                    <span
-                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">MidJourney</span>
-                </div>
-                <div class="p-4 font-mono h-[172px] flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Imagen Artística Pro</h3>
-                    <p class="text-indigo-400 text-sm mb-2">Arte Digital</p>
-                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Genera imágenes artísticas de alta calidad con
-                        estilos personalizados...</p>
-                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
-                        <span class="text-slate-500 text-xs">Por @artist_maya</span>
-                        <span class="text-slate-500 text-xs flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            567
-                        </span>
-                    </div>
+            <div class="animate-pulse rounded-xl border border-slate-700 bg-slate-800 overflow-hidden h-[260px]">
+                <div class="h-[88px] bg-slate-700"></div>
+                <div class="p-4">
+                    <div class="h-4 bg-slate-700 rounded w-3/4 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-1/2 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-full"></div>
                 </div>
             </div>
-
-            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 h-[260px] cursor-pointer"
-                data-prompt-id="3">
-                <div class="h-[88px] bg-orange-500 flex items-center justify-center relative">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                        </svg>
-                    </div>
-                    <span
-                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Stable
-                        Diffusion</span>
-                </div>
-                <div class="p-4 font-mono h-[172px] flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Generador Fotorrealista</h3>
-                    <p class="text-orange-400 text-sm mb-2">Fotografía</p>
-                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Crea imágenes fotorrealistas con control preciso
-                        de iluminación...</p>
-                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
-                        <span class="text-slate-500 text-xs">Por @photo_master</span>
-                        <span class="text-slate-500 text-xs flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            891
-                        </span>
-                    </div>
+            <div class="animate-pulse rounded-xl border border-slate-700 bg-slate-800 overflow-hidden h-[260px]">
+                <div class="h-[88px] bg-slate-700"></div>
+                <div class="p-4">
+                    <div class="h-4 bg-slate-700 rounded w-3/4 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-1/2 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-full"></div>
                 </div>
             </div>
-
-            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300 h-[260px] cursor-pointer"
-                data-prompt-id="4">
-                <div class="h-[88px] bg-violet-500 flex items-center justify-center relative">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="10" />
-                        </svg>
-                    </div>
-                    <span
-                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Claude</span>
-                </div>
-                <div class="p-4 font-mono h-[172px] flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Copywriter Pro</h3>
-                    <p class="text-violet-400 text-sm mb-2">Escritura</p>
-                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Escribe textos persuasivos para marketing y
-                        ventas...</p>
-                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
-                        <span class="text-slate-500 text-xs">Por @writer_pro</span>
-                        <span class="text-slate-500 text-xs flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            412
-                        </span>
-                    </div>
+            <div class="animate-pulse rounded-xl border border-slate-700 bg-slate-800 overflow-hidden h-[260px]">
+                <div class="h-[88px] bg-slate-700"></div>
+                <div class="p-4">
+                    <div class="h-4 bg-slate-700 rounded w-3/4 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-1/2 mb-3"></div>
+                    <div class="h-3 bg-slate-700 rounded w-full"></div>
                 </div>
             </div>
-
-            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-[260px] cursor-pointer"
-                data-prompt-id="5">
-                <div class="h-[88px] bg-blue-500 flex items-center justify-center relative">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                        </svg>
-                    </div>
-                    <span
-                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">Gemini</span>
-                </div>
-                <div class="p-4 font-mono h-[172px] flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Data Analyst Pro</h3>
-                    <p class="text-blue-400 text-sm mb-2">Análisis</p>
-                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Analiza datos y genera insights con
-                        explicaciones claras...</p>
-                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
-                        <span class="text-slate-500 text-xs">Por @data_wizard</span>
-                        <span class="text-slate-500 text-xs flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            156
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="prompt-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 h-[260px] cursor-pointer"
-                data-prompt-id="6">
-                <div class="h-[88px] bg-teal-500 flex items-center justify-center relative">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                        </svg>
-                    </div>
-                    <span
-                        class="absolute top-2 right-2 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">DALL-E</span>
-                </div>
-                <div class="p-4 font-mono h-[172px] flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-1 truncate">Ilustración Profesional</h3>
-                    <p class="text-teal-400 text-sm mb-2">Arte Digital</p>
-                    <p class="text-slate-500 text-xs line-clamp-2 mb-3">Crea ilustraciones profesionales para cualquier
-                        proyecto...</p>
-                    <div class="flex items-center justify-between mt-auto pt-2 border-t border-slate-700">
-                        <span class="text-slate-500 text-xs">Por @creative_ai</span>
-                        <span class="text-slate-500 text-xs flex items-center gap-1">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            723
-                        </span>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         <!-- Paginación -->
@@ -413,67 +244,36 @@ Formato de respuesta:
         </div>
     </div>
 
-    <script src="js/pagination.js"></script>
-    <script>
-        // Filtros de categoría
-        var filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                filterBtns.forEach(function (b) {
-                    b.classList.remove('active', 'bg-indigo-500', 'text-white');
-                    b.classList.add('bg-slate-800', 'border', 'border-slate-700', 'text-slate-300');
-                });
-                this.classList.remove('bg-slate-800', 'border', 'border-slate-700', 'text-slate-300');
-                this.classList.add('active', 'bg-indigo-500', 'text-white');
-            });
-        });
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-        // Modal de visualización
+    <!-- Scripts -->
+    <script src="js/supabase-client.js"></script>
+    <script src="js/pagination.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/prompt-card.js"></script>
+    <script src="js/pages/community-page.js"></script>
+
+    <script>
+        // Modal close handler (mantenido para compatibilidad)
         var viewModal = document.getElementById('view-modal');
         var closeViewModal = document.getElementById('close-view-modal');
-        var copyPromptBtn = document.getElementById('copy-prompt-btn');
 
-        document.querySelectorAll('.prompt-card').forEach(function (card) {
-            card.addEventListener('click', function () {
-                viewModal.classList.remove('hidden');
-                viewModal.classList.add('flex');
-            });
-        });
-
-        closeViewModal.addEventListener('click', function () {
-            viewModal.classList.add('hidden');
-            viewModal.classList.remove('flex');
-        });
-
-        viewModal.addEventListener('click', function (e) {
-            if (e.target === viewModal) {
+        if (closeViewModal) {
+            closeViewModal.addEventListener('click', function () {
                 viewModal.classList.add('hidden');
                 viewModal.classList.remove('flex');
-            }
-        });
-
-        copyPromptBtn.addEventListener('click', function () {
-            var content = document.getElementById('modal-content').textContent;
-            navigator.clipboard.writeText(content).then(function () {
-                copyPromptBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ¡Copiado!';
-                setTimeout(function () {
-                    copyPromptBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copiar Prompt';
-                }, 2000);
             });
-        });
+        }
 
-        // Paginación
-        document.addEventListener('DOMContentLoaded', function () {
-            if (typeof PromptHub !== 'undefined' && PromptHub.Pagination) {
-                var pagination = new PromptHub.Pagination({
-                    itemsPerPage: 12,
-                    onPageChange: function (page, info) {
-                        console.log('Página:', page);
-                    }
-                });
-                pagination.init(48, 'pagination-container');
-            }
-        });
+        if (viewModal) {
+            viewModal.addEventListener('click', function (e) {
+                if (e.target === viewModal) {
+                    viewModal.classList.add('hidden');
+                    viewModal.classList.remove('flex');
+                }
+            });
+        }
     </script>
 
 </body>

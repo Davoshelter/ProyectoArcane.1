@@ -263,75 +263,38 @@
         </div>
     </div>
 
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Scripts -->
+    <script src="js/supabase-client.js"></script>
     <script src="js/sidebar.js"></script>
     <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/prompt-card.js"></script>
+    <script src="js/pages/shared-page.js"></script>
+
     <script>
-        // Modal de usuarios
+        // Modal de usuarios (mantenido para compatibilidad)
         var usersModal = document.getElementById('users-modal');
         var closeUsersModal = document.getElementById('close-users-modal');
-        var usersList = document.getElementById('users-list');
-        var modalPromptName = document.getElementById('modal-prompt-name');
 
-        // Abrir modal al hacer clic en una tarjeta compartida
-        document.querySelectorAll('.shared-card').forEach(function (card) {
-            card.addEventListener('click', function () {
-                var promptId = this.getAttribute('data-prompt-id');
-                var promptName = this.querySelector('h3').textContent;
-                var sharedUsers = JSON.parse(this.getAttribute('data-shared-users') || '[]');
-
-                modalPromptName.textContent = promptName;
-
-                // Renderizar lista de usuarios
-                var html = '';
-                sharedUsers.forEach(function (email, index) {
-                    var initials = email.substring(0, 2).toUpperCase();
-                    var colors = ['from-teal-400 to-indigo-500', 'from-violet-400 to-pink-500', 'from-emerald-400 to-teal-500', 'from-orange-400 to-red-500'];
-                    var color = colors[index % colors.length];
-
-                    html += '<div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl">';
-                    html += '  <div class="flex items-center gap-3">';
-                    html += '    <div class="w-10 h-10 bg-gradient-to-br ' + color + ' rounded-full flex items-center justify-center text-white font-semibold text-sm">' + initials + '</div>';
-                    html += '    <div>';
-                    html += '      <p class="text-sm font-medium text-slate-200">' + email + '</p>';
-                    html += '      <p class="text-xs text-slate-500">Puede ver</p>';
-                    html += '    </div>';
-                    html += '  </div>';
-                    html += '  <button class="p-2 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors" title="Revocar acceso">';
-                    html += '    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
-                    html += '  </button>';
-                    html += '</div>';
-                });
-
-                if (sharedUsers.length === 0) {
-                    html = '<p class="text-center text-slate-500 py-8">Este prompt no está compartido con nadie.</p>';
-                }
-
-                usersList.innerHTML = html;
-
-                usersModal.classList.remove('hidden');
-                usersModal.classList.add('flex');
-            });
-        });
-
-        // Cerrar modal
-        closeUsersModal.addEventListener('click', function () {
-            usersModal.classList.add('hidden');
-            usersModal.classList.remove('flex');
-        });
-
-        usersModal.addEventListener('click', function (e) {
-            if (e.target === usersModal) {
+        if (closeUsersModal) {
+            closeUsersModal.addEventListener('click', function () {
                 usersModal.classList.add('hidden');
                 usersModal.classList.remove('flex');
-            }
-        });
+            });
+        }
 
-        // Inicializar paginación (ejemplo)
-        document.addEventListener('DOMContentLoaded', function () {
-            // En el futuro, esto vendrá de Supabase
-            // Por ahora es visual
-        });
+        if (usersModal) {
+            usersModal.addEventListener('click', function (e) {
+                if (e.target === usersModal) {
+                    usersModal.classList.add('hidden');
+                    usersModal.classList.remove('flex');
+                }
+            });
+        }
     </script>
 
 </body>
