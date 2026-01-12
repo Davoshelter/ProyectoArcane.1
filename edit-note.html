@@ -223,135 +223,85 @@
             </div>
         </header>
 
-        <!-- EDITOR BODY -->
-        <div class="flex-1 flex">
-            <!-- Editor Principal -->
-            <div class="flex-1 p-6 lg:p-8 max-w-5xl w-full mx-auto">
+        <!-- EDITOR BODY (Estilo Notion) -->
+        <div class="flex-1 overflow-y-auto bg-slate-900/50">
+            <div class="max-w-4xl mx-auto min-h-screen bg-slate-800/20 shadow-2xl border-x border-slate-700/50 flex flex-col">
+                
+                <!-- Page Top Margin -->
+                <div class="h-12 lg:h-20"></div>
 
-                <!-- Title -->
-                <div class="mb-6">
-                    <input type="text" id="prompt-title" value=""
-                        placeholder="Título descriptivo del prompt..."
-                        class="w-full bg-transparent border-none text-2xl lg:text-3xl font-bold text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-0">
-                </div>
-
-                <!-- Tags -->
-                <div class="flex flex-wrap gap-2 mb-6" id="tags-container">
-                    <button id="add-tag-btn"
-                        class="px-3 py-1.5 border border-dashed border-slate-600 rounded-full text-sm text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-colors">
-                        + Añadir tag
-                    </button>
-                </div>
-
-                <!-- Toolbar de Formato -->
-                <div class="flex items-center gap-1 p-2 bg-slate-800/50 border border-slate-700 rounded-xl mb-4">
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="h1" title="Título H1 (Verde)">
-                        <span class="font-bold text-sm">H1</span>
-                    </button>
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-yellow-400 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="h2" title="Título H2 (Amarillo)">
-                        <span class="font-bold text-sm">H2</span>
-                    </button>
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="h3" title="Título H3 (Rojo)">
-                        <span class="font-bold text-sm">H3</span>
-                    </button>
-                    <div class="w-px h-6 bg-slate-700 mx-1"></div>
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="bold" title="Negrita">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z" />
-                        </svg>
-                    </button>
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="italic" title="Cursiva">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 4h4m-2 0v16m-4 0h8" />
-                        </svg>
-                    </button>
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="code" title="Código inline">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                    </button>
-                    <div class="w-px h-6 bg-slate-700 mx-1"></div>
-                    <button
-                        class="format-btn p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
-                        data-format="list" title="Lista">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                    <button id="insert-code-block"
-                        class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-700 rounded-lg transition-colors"
-                        title="Insertar bloque de código (/code)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Editor de Contenido -->
-                <div id="editor-container"
-                    class="rich-editor min-h-[400px] bg-slate-800/30 border border-slate-700 rounded-xl p-6 mb-6">
-                    <!-- Bloque de código existente -->
-                    <div class="code-block-wrapper" id="main-code-block">
-                        <div class="code-block-header">
-                            <div class="flex items-center gap-2">
-                                <div class="flex gap-1.5">
-                                    <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-                                    <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
-                                    <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-                                </div>
-                                <select id="code-language"
-                                    class="bg-transparent text-sm text-slate-400 border-none focus:outline-none cursor-pointer">
-                                    <option value="plaintext">prompt.txt</option>
-                                    <option value="javascript">JavaScript</option>
-                                    <option value="html">HTML</option>
-                                    <option value="css">CSS</option>
-                                    <option value="python">Python</option>
-                                    <option value="sql">SQL</option>
-                                </select>
-                            </div>
-                            <button id="copy-code-btn"
-                                class="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                                Copiar
-                            </button>
-                        </div>
-                        <div class="code-block-content">
-                            <textarea id="prompt-content"
-                                class="w-full min-h-[300px] bg-transparent font-mono text-sm text-slate-300 leading-relaxed resize-none focus:outline-none"
-                                placeholder="Escribe tu prompt aquí... Usa /code para insertar un bloque de código."></textarea>
+                <!-- Editor Container -->
+                <div class="px-8 lg:px-16 flex-1 flex flex-col">
+                    
+                    <!-- Icon Selector Placeholder -->
+                    <div class="mb-6 group relative w-max">
+                        <div id="prompt-icon-large" class="w-20 h-20 bg-slate-700/50 rounded-2xl flex items-center justify-center text-4xl border border-slate-600 transition-all hover:bg-slate-700 group-hover:scale-105 cursor-default">
+                            📄
                         </div>
                     </div>
-                </div>
 
-                <!-- Notes Section -->
-                <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-6">
-                    <label class="block text-sm font-medium text-slate-400 mb-2">Notas adicionales</label>
-                    <textarea id="prompt-notes"
-                        placeholder="Añade notas sobre cuándo usar este prompt, variaciones, etc..." rows="3"
-                        class="w-full bg-transparent border-none text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-0 resize-none"></textarea>
-                </div>
+                    <!-- Title (Notion Style) -->
+                    <div class="mb-4">
+                        <textarea id="prompt-title" 
+                            rows="1"
+                            placeholder="Sin título"
+                            class="w-full bg-transparent border-none text-4xl lg:text-5xl font-extrabold text-slate-100 placeholder-slate-700 focus:outline-none focus:ring-0 resize-none leading-tight py-2 overflow-hidden"></textarea>
+                    </div>
 
+                    <!-- Metadata Metadata (Category + Last Edit) -->
+                    <div class="flex items-center gap-4 mb-8 text-sm text-slate-500 border-b border-slate-700/50 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-slate-400">Categoría:</span>
+                            <span id="prompt-category-badge" class="px-2 py-0.5 bg-slate-700/50 text-indigo-400 rounded-lg text-xs">...</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-slate-400">Editado:</span>
+                            <span id="prompt-last-edit">...</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Toolbar -->
+                    <div class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-md -mx-4 px-4 py-2 border-y border-slate-700/50 mb-6 flex items-center gap-1 overflow-x-auto no-scrollbar">
+                        <button class="format-btn p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-700/50 rounded-lg transition-all" data-format="h1" title="Título 1">
+                            <span class="font-bold text-sm">H1</span>
+                        </button>
+                        <button class="format-btn p-2 text-slate-400 hover:text-yellow-400 hover:bg-slate-700/50 rounded-lg transition-all" data-format="h2" title="Título 2">
+                            <span class="font-bold text-sm">H2</span>
+                        </button>
+                        <div class="w-px h-4 bg-slate-700 mx-1"></div>
+                        <button class="format-btn p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg transition-all" data-format="bold" title="Negrita">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"/></svg>
+                        </button>
+                        <button class="format-btn p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg transition-all" data-format="italic" title="Cursiva">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4m-2 0v16m-4 0h8"/></svg>
+                        </button>
+                        <button class="format-btn p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-700/50 rounded-lg transition-all" data-format="code" title="Código inline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </button>
+                        <div class="w-px h-4 bg-slate-700 mx-1"></div>
+                        <button id="insert-code-block" class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-700/50 rounded-lg transition-all" title="Bloque de código">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div id="editor-container" class="flex-1 flex flex-col mb-12">
+                        <textarea id="prompt-content"
+                            class="w-full h-full min-h-[500px] bg-transparent border-none text-slate-300 placeholder-slate-700 focus:outline-none focus:ring-0 resize-none text-lg leading-relaxed font-sans"
+                            placeholder="Empieza a escribir..."></textarea>
+                    </div>
+
+                    <!-- Bottom Info/Notes -->
+                    <div class="border-t border-slate-700/50 pt-6 mb-20">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Notas y Contexto</h4>
+                        <textarea id="prompt-notes"
+                            placeholder="Añade contexto adicional aquí..."
+                            class="w-full bg-slate-800/30 rounded-xl p-4 border border-slate-700/50 text-slate-400 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all text-sm leading-relaxed"
+                            rows="4"></textarea>
+                    </div>
+                </div>
             </div>
+        </div>
 
             <!-- AI SIDEBAR (Right) -->
             <aside id="ai-sidebar"
@@ -459,7 +409,7 @@
         </div>
     </div>
 
-    <!-- MODAL: Compartir -->
+    <!-- MODAL: Compartir y Publicar -->
     <div id="share-modal"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl">
@@ -473,24 +423,53 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-6 space-y-4">
+            
+            <div class="p-6 space-y-6">
+                <!-- Sección 1: Compartir Privado -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Email del usuario</label>
-                    <input type="email" id="share-email" placeholder="usuario@email.com"
-                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none">
+                    <h3 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+                        Compartir Privado
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nombre de usuario (@username)</label>
+                            <input type="text" id="share-username" placeholder="ej: milton_dev"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:border-indigo-500 focus:outline-none text-sm">
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="share-permission"
+                                class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-200 focus:border-indigo-500 focus:outline-none text-sm">
+                                <option value="view">Solo ver</option>
+                                <option value="edit">Puede editar</option>
+                            </select>
+                            <button id="share-submit"
+                                class="flex-1 bg-indigo-500 hover:bg-indigo-400 text-white font-medium py-2.5 rounded-xl transition-colors text-sm">
+                                Enviar Invitación
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="border-t border-slate-700"></div>
+
+                <!-- Sección 2: Publicar en Comunidad -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Permisos</label>
-                    <select id="share-permission"
-                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:border-indigo-500 focus:outline-none">
-                        <option value="view">Solo ver</option>
-                        <option value="edit">Puede editar</option>
-                    </select>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Publicar en Comunidad
+                        </h3>
+                        <!-- Toggle Switch -->
+                        <button id="public-toggle-btn" class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-700 transition-colors focus:outline-none" role="switch" aria-checked="false">
+                            <span class="sr-only">Hacer público</span>
+                            <span id="public-toggle-dot" class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"></span>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500">
+                        Si activas esto, cualquier usuario de Prompt Hub podrá ver este prompt en la sección "Comunidad".
+                    </p>
                 </div>
-                <button id="share-submit"
-                    class="w-full bg-teal-500 hover:bg-teal-400 text-white font-semibold py-3 rounded-xl transition-colors">
-                    Compartir
-                </button>
             </div>
         </div>
     </div>

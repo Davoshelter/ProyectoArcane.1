@@ -54,6 +54,63 @@ function executeScripts(container) {
  */
 function initComponentEvents(componentId) {
     if (componentId === 'navbar-container') {
+        // Lógica de Autenticación Dinámica
+        (async function updateNavbarAuth() {
+            // Esperar a que Supabase esté listo si es necesario
+            let supabase = window.supabaseClient;
+            if (!supabase && window.initSupabase) {
+                supabase = window.initSupabase();
+            }
+
+            if (!supabase) {
+                console.warn('Navbar: Supabase not ready, retrying...');
+                setTimeout(updateNavbarAuth, 500);
+                return;
+            }
+
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            const navLogin = document.getElementById('nav-login');
+            const navRegister = document.getElementById('nav-register');
+            const navDashboard = document.getElementById('nav-dashboard');
+            const navCta = document.getElementById('nav-cta');
+            const navLogout = document.getElementById('nav-logout');
+            const mobileGuest = document.getElementById('mobile-guest-links');
+            const mobileAuth = document.getElementById('mobile-auth-links');
+
+            const handleLogout = async () => {
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+            };
+
+            if (session) {
+                // Usuario Logueado
+                if (navLogin) navLogin.classList.add('hidden');
+                if (navRegister) navRegister.classList.add('hidden');
+                if (navDashboard) navDashboard.classList.remove('hidden');
+                if (navCta) navCta.classList.add('hidden');
+                if (navLogout) {
+                    navLogout.classList.remove('hidden');
+                    navLogout.onclick = handleLogout;
+                }
+                if (mobileGuest) mobileGuest.classList.add('hidden');
+                if (mobileAuth) {
+                    mobileAuth.classList.remove('hidden');
+                    const mLogout = document.getElementById('mobile-logout-btn');
+                    if (mLogout) mLogout.onclick = handleLogout;
+                }
+            } else {
+                // Invitado
+                if (navLogin) navLogin.classList.remove('hidden');
+                if (navRegister) navRegister.classList.remove('hidden');
+                if (navDashboard) navDashboard.classList.add('hidden');
+                if (navCta) navCta.classList.remove('hidden');
+                if (navLogout) navLogout.classList.add('hidden');
+                if (mobileGuest) mobileGuest.classList.remove('hidden');
+                if (mobileAuth) mobileAuth.classList.add('hidden');
+            }
+        })();
+
         // Mobile menu toggle
         setTimeout(function () {
             const menuBtn = document.querySelector('#mobile-menu-btn');
