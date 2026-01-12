@@ -149,23 +149,7 @@
                     <span class="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded-full">Solo lectura</span>
                 </div>
                 <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4">
-                    <pre id="modal-content" class="font-mono text-sm text-slate-300 whitespace-pre-wrap"># Debug Expert Assistant
-
-Actúa como un experto senior en debugging y resolución de problemas de código.
-
-Tu objetivo es:
-1. Analizar el código proporcionado en busca de errores
-2. Identificar la causa raíz del problema
-3. Proporcionar una solución paso a paso
-4. Explicar por qué ocurrió el error
-
-Formato de respuesta:
-- Diagnóstico: Breve descripción del problema
-- Solución: Código corregido con comentarios
-- Prevención: Tips para evitar errores similares
-
-// Pega tu código con error a continuación:
-[TU_CODIGO_AQUI]</pre>
+                    <div id="modal-content" class="prose prose-invert prose-sm max-w-none"></div>
                 </div>
                 <button id="copy-prompt-btn"
                     class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors">
@@ -181,6 +165,8 @@ Formato de respuesta:
 
     <!-- Supabase SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Marked JS for Markdown Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- Scripts -->
     <script src="js/supabase-client.js"></script>

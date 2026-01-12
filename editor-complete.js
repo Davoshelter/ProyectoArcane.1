@@ -281,9 +281,38 @@
             if (error) throw error;
             console.log('📦 loadData: Datos recibidos', prompt);
 
+            // --- VERIFICACIÓN DE PERMISOS ---
+            const currentUserId = currentUserSession.user.id;
+            const isOwner = prompt.user_id === currentUserId;
+            let canEdit = isOwner;
+
+            if (!isOwner) {
+                // Verificar si es compartido y qué permisos tiene
+                const { data: shareData } = await client
+                    .from('prompt_shares')
+                    .select('permission')
+                    .eq('prompt_id', promptId)
+                    .eq('shared_with', currentUserId)
+                    .single();
+
+                if (shareData) {
+                    console.log('👀 Modo Compartido. Permiso:', shareData.permission);
+                    canEdit = (shareData.permission === 'edit');
+                } else {
+                    console.warn('⚠️ No es dueño ni tiene share explícito. Asumiendo solo lectura (o público).');
+                    canEdit = false;
+                }
+            }
+
+            // Aplicar modo solo lectura si es necesario
+            if (!canEdit) {
+                setReadOnlyMode();
+            }
+
             // 1. Campos de Texto
             if (ui.title) {
                 ui.title.value = prompt.title || '';
+                if (!canEdit) ui.title.disabled = true; // Deshabilitar si solo lectura
                 // Ajustar altura automáticamente al cargar
                 ui.title.style.height = 'auto';
                 ui.title.style.height = (ui.title.scrollHeight) + 'px';
@@ -292,13 +321,44 @@
             if (easyMDE) {
                 console.log('📝 loadData: Seteando EasyMDE');
                 easyMDE.value(prompt.content || '');
+                if (!canEdit) {
+                    // easyMDE.toggleReadOnly() puede fallar en algunas versiones
+                    if (easyMDE.codemirror) {
+                        easyMDE.codemirror.setOption('readOnly', true);
+                    }
+                    // Activar Vista Previa por defecto para que se vea como documento final
+                    setTimeout(() => {
+                        if (easyMDE.togglePreview) easyMDE.togglePreview();
+
+                        // Limpiar barra de herramientas: Ocultar todo menos el ojo (Preview)
+                        const toolbar = document.querySelector('.editor-toolbar');
+                        if (toolbar) {
+                            // Ocultar botones de edición
+                            const buttons = toolbar.querySelectorAll('a, button');
+                            buttons.forEach(btn => {
+                                if (!btn.classList.contains('preview')) {
+                                    btn.style.display = 'none';
+                                }
+                            });
+                            // Ocultar separadores
+                            const separators = toolbar.querySelectorAll('.separator');
+                            separators.forEach(s => s.style.display = 'none');
+                        }
+                    }, 100);
+                }
             } else {
                 console.warn('⚠️ loadData: EasyMDE no está listo, usando fallback');
                 const contentArea = document.getElementById('prompt-content');
-                if (contentArea) contentArea.value = prompt.content || '';
+                if (contentArea) {
+                    contentArea.value = prompt.content || '';
+                    if (!canEdit) contentArea.disabled = true;
+                }
             }
 
-            if (ui.notes) ui.notes.value = prompt.description || '';
+            if (ui.notes) {
+                ui.notes.value = prompt.description || '';
+                if (!canEdit) ui.notes.disabled = true;
+            }
 
             // 2. Header & Badges
             if (ui.headerTitle) {
@@ -360,6 +420,33 @@
             console.log('🔓 loadData: Liberando loader');
             toggleLoading(false);
         }
+    }
+
+    // --- HELPER PARA MODO SOLO LECTURA ---
+    function setReadOnlyMode() {
+        console.log('🔒 Activando modo SOLO LECTURA');
+
+        // Deshabilitar Botón Guardar
+        if (ui.saveBtn) {
+            ui.saveBtn.disabled = true;
+            ui.saveBtn.textContent = 'Solo Lectura';
+            ui.saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            ui.saveBtn.onclick = null; // Quitar evento click
+        }
+
+        // Ocultar Botón Eliminar
+        if (ui.deleteBtn) {
+            ui.deleteBtn.classList.add('hidden');
+        }
+
+        // Ocultar opciones de compartir/público si no es dueño (opcional, pero recomendado)
+        const publicSection = document.getElementById('public-toggle-btn')?.parentElement;
+        if (publicSection) publicSection.style.pointerEvents = 'none'; // Deshabilitar toggle
+
+        const shareBtn = document.getElementById('share-btn');
+        if (shareBtn) shareBtn.classList.add('hidden'); // Ocultar botón compartir
+
+        safeShowToast('👁️ Modo Vista: No tienes permisos para editar', 'info');
     }
 
     // loadData ya no se llama automáticamente aquí, se llama desde initEditor
