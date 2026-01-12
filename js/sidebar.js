@@ -159,22 +159,22 @@ async function logoutUser() {
             const mainContent = document.querySelector('main');
             if (isCollapsed) {
                 sidebar.classList.add('collapsed');
-                if(mainContent) { mainContent.classList.remove('lg:ml-64'); mainContent.classList.add('lg:ml-20'); }
+                if (mainContent) { mainContent.classList.remove('lg:ml-64'); mainContent.classList.add('lg:ml-20'); }
             } else {
                 sidebar.classList.remove('collapsed');
-                if(mainContent) { mainContent.classList.remove('lg:ml-20'); mainContent.classList.add('lg:ml-64'); }
+                if (mainContent) { mainContent.classList.remove('lg:ml-20'); mainContent.classList.add('lg:ml-64'); }
             }
             localStorage.setItem('sidebarCollapsed', isCollapsed);
         }
         toggleUI();
 
         // Listeners UI
-        if(collapseBtn) collapseBtn.onclick = () => { isCollapsed = !isCollapsed; toggleUI(); };
-        if(mobileMenuBtn) mobileMenuBtn.onclick = () => { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); };
-        if(overlay) overlay.onclick = () => { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); };
-        
+        if (collapseBtn) collapseBtn.onclick = () => { isCollapsed = !isCollapsed; toggleUI(); };
+        if (mobileMenuBtn) mobileMenuBtn.onclick = () => { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); };
+        if (overlay) overlay.onclick = () => { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); };
+
         // Listener Logout Directo
-        if(logoutBtn) {
+        if (logoutBtn) {
             logoutBtn.onclick = (e) => {
                 e.preventDefault();
                 logoutUser();
@@ -185,7 +185,7 @@ async function logoutUser() {
         const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
         const links = document.querySelectorAll('#sidebar-nav a');
         links.forEach(link => {
-            if(link.getAttribute('href') === currentPath) {
+            if (link.getAttribute('href') === currentPath) {
                 link.classList.remove('text-slate-400', 'hover:bg-slate-700/50');
                 link.classList.add('bg-slate-700/50', 'text-indigo-400');
             }
@@ -208,16 +208,36 @@ async function logoutUser() {
                 if (supabase) {
                     const { data: { session } } = await supabase.auth.getSession();
                     if (session) {
-                        const { data: profile } = await supabase
+                        const { data: profile, error: profileError } = await supabase
                             .from('profiles')
                             .select('*')
                             .eq('id', session.user.id)
                             .single();
-                        
+
+                        // Debugging logs
+                        console.log('🔍 Supabase Session User:', session.user);
+                        console.log('🔍 Profile Data:', profile);
+                        if (profileError) console.warn('⚠️ Error fetching profile:', profileError);
+
+                        // Prioridad de Visualización:
+                        // 1. Profile DB: Nombre Completo > Username
+                        // 2. Auth Metadata: Nombre Completo > Username
+                        // 3. Fallback: Email
+
+                        const displayName = profile?.full_name
+                            || profile?.username
+                            || session.user.user_metadata?.full_name
+                            || session.user.user_metadata?.name
+                            || session.user.user_metadata?.username
+                            || session.user.email.split('@')[0];
+
+                        const avatar_url = profile?.avatar_url
+                            || session.user.user_metadata?.avatar_url;
+
                         updateSidebarUser({
                             email: session.user.email,
-                            username: profile?.username || session.user.email.split('@')[0],
-                            avatar_url: profile?.avatar_url
+                            username: displayName,
+                            avatar_url: avatar_url
                         });
                     }
                 }
