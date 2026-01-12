@@ -98,9 +98,17 @@
 
         // Poblar datos
         document.getElementById('modal-title').textContent = prompt.title || 'Sin título';
-        document.getElementById('modal-content').textContent = prompt.content || '';
+        // Renderizar Markdown si marked está disponible, si no texto plano
+        const contentVal = prompt.content || '';
+        const modalContent = document.getElementById('modal-content');
+        if (typeof marked !== 'undefined') {
+            modalContent.innerHTML = marked.parse(contentVal);
+        } else {
+            modalContent.textContent = contentVal;
+            modalContent.classList.add('whitespace-pre-wrap', 'font-mono'); // Fallback style
+        }
         document.getElementById('modal-edit-btn').href = `edit-note.html?id=${prompt.id}`;
-        
+
         const catEl = document.getElementById('modal-category');
         catEl.textContent = prompt.categories?.name || 'General';
         catEl.style.color = prompt.categories?.color || '#cbd5e1';
@@ -125,7 +133,7 @@
             modal.classList.remove('flex');
         };
         modal.onclick = (e) => {
-            if(e.target === modal) closeBtn.click();
+            if (e.target === modal) closeBtn.click();
         };
     }
 
