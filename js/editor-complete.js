@@ -204,6 +204,7 @@
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 updatePublicUI(isPublic);
+                if (typeof loadSharedUsers === 'function') loadSharedUsers();
             }
         };
 
@@ -614,14 +615,69 @@
     const shareSubmit = document.getElementById('share-submit');
     const shareInput = document.getElementById('share-username');
     const sharePermission = document.getElementById('share-permission');
+    const sharedUsersContainer = document.getElementById('shared-users-container');
+    const sharedUsersList = document.getElementById('shared-users-list');
 
-    if (document.getElementById('share-btn')) {
-        document.getElementById('share-btn').onclick = () => {
-            shareModal.classList.remove('hidden');
-            shareModal.classList.add('flex');
-            updatePublicUI(isPublic); // Asegurar que el toggle muestre el estado correcto al abrir
-        };
+    async function loadSharedUsers() {
+        if (!promptId || !supabase) return;
+        
+        console.log('🔄 Cargando usuarios compartidos...');
+        try {
+            const { data: shares, error } = await supabase
+                .from('prompt_shares')
+                .select('id, permission, profiles:shared_with(username, avatar_url)')
+                .eq('prompt_id', promptId);
+
+            if (error) {
+                console.error('❌ Error RLS/DB al cargar compartidos:', error);
+                throw error;
+            }
+
+            console.log('👥 Usuarios compartidos encontrados:', shares);
+
+            if (shares && shares.length > 0) {
+                sharedUsersContainer.classList.remove('hidden');
+                sharedUsersList.innerHTML = shares.map(share => `
+                    <div class="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-indigo-500/20 rounded-full flex items-center justify-center text-xs text-indigo-300 font-bold">
+                                ${share.profiles?.username?.[0]?.toUpperCase() || 'U'}
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-slate-300">@${share.profiles?.username}</span>
+                                <span class="text-[10px] text-slate-500">${share.permission === 'edit' ? 'Puede editar' : 'Solo ver'}</span>
+                            </div>
+                        </div>
+                        <button onclick="revokeAccess('${share.id}')" class="text-slate-500 hover:text-red-400 p-1 transition-colors" title="Revocar acceso">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                sharedUsersContainer.classList.add('hidden');
+                sharedUsersList.innerHTML = '';
+            }
+        } catch (e) {
+            console.error('Error loading shared users:', e);
+        }
     }
+
+    // Exponer revokeAccess globalmente para que funcione el onclick
+    window.revokeAccess = async (shareId) => {
+        if (!confirm('¿Seguro que quieres quitar el acceso a este usuario?')) return;
+        try {
+            const { error } = await supabase
+                .from('prompt_shares')
+                .delete()
+                .eq('id', shareId);
+            
+            if (error) throw error;
+            safeShowToast('Acceso revocado');
+            loadSharedUsers(); // Recargar lista
+        } catch (e) {
+            safeShowToast('Error al revocar: ' + e.message, 'error');
+        }
+    };
     
     if (closeShare) {
         closeShare.onclick = () => {
@@ -681,6 +737,7 @@
 
                 safeShowToast(`¡Invitación enviada a @${targetUsername}!`);
                 shareInput.value = ''; // Limpiar input
+                loadSharedUsers(); // Actualizar lista
 
             } catch (e) {
                 safeShowToast(e.message, 'error');
