@@ -38,7 +38,7 @@
     function toggleLoading(show) {
         const loader = document.getElementById('editor-loader');
         if (!loader) return;
-        
+
         if (show) {
             loader.style.opacity = '1';
             loader.style.pointerEvents = 'all';
@@ -52,7 +52,7 @@
 
     // Auto-ajuste del título
     if (ui.title) {
-        ui.title.oninput = function() {
+        ui.title.oninput = function () {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         };
@@ -60,7 +60,7 @@
 
     const promptId = new URLSearchParams(window.location.search).get('id');
     // Ya no necesitamos URLs harcodeadas si usamos supabase-client.js
-    
+
     let supabase = null;
     let currentSessionId = null;
     let currentUserSession = null; // Variable global para la sesión
@@ -89,7 +89,7 @@
     function updateFavoriteUI() {
         const btn = document.getElementById('favorite-btn');
         if (!btn) return;
-        
+
         const icon = btn.querySelector('svg');
         const path = icon?.querySelector('path');
 
@@ -129,7 +129,7 @@
     // 1. Carga Robusta (Espera hasta que Supabase esté listo)
     async function initEditor() {
         console.log('⏳ Editor: Esperando inicialización de Supabase...');
-        
+
         const checkSupabase = setInterval(async () => {
             // Intentar obtener cliente
             let client = window.supabaseClient;
@@ -141,7 +141,7 @@
                 console.log('✅ Editor: Supabase conectado');
 
                 const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                
+
                 if (sessionError || !session) {
                     console.warn('⚠️ Sin sesión activa. Redirigiendo...');
                     window.location.href = 'auth-login.html';
@@ -153,7 +153,7 @@
 
                 // Cargar datos inmediatamente pasando el cliente
                 if (promptId) await loadData(supabase);
-                
+
                 // --- ASIGNAR EVENTOS DE FORMA SEGURA ---
                 setupEventListeners();
 
@@ -161,10 +161,18 @@
                 if (window.updateSidebarUser) {
                     supabase.from('profiles').select('*').eq('id', session.user.id).single()
                         .then(({ data: p }) => {
-                            window.updateSidebarUser({ 
-                                email: session.user.email, 
-                                username: p?.username, 
-                                avatar_url: p?.avatar_url 
+                            // PRIORIDAD DE VISUALIZACIÓN: Full Name > Username
+                            const displayName = p?.full_name
+                                || p?.username
+                                || session.user.user_metadata?.full_name
+                                || session.user.user_metadata?.name
+                                || session.user.user_metadata?.username
+                                || session.user.email.split('@')[0];
+
+                            window.updateSidebarUser({
+                                email: session.user.email,
+                                username: displayName,
+                                avatar_url: p?.avatar_url || session.user.user_metadata?.avatar_url
                             });
                         });
                 }
@@ -184,7 +192,7 @@
 
     function setupEventListeners() {
         console.log('🎮 Configurando eventos de botones...');
-        
+
         const btnFavorite = document.getElementById('favorite-btn');
         const btnShare = document.getElementById('share-btn');
         const btnConnect = document.getElementById('connect-btn');
@@ -197,7 +205,7 @@
             console.log('⭐ Botón favorito detectado');
             btnFavorite.onclick = handleFavoriteClick;
         }
-        
+
         if (btnShare) btnShare.onclick = () => {
             const modal = document.getElementById('share-modal');
             if (modal) {
@@ -219,7 +227,7 @@
         };
 
         if (btnSave) btnSave.onclick = handleSaveClick;
-        
+
         if (btnDelete) btnDelete.onclick = () => {
             const modal = document.getElementById('delete-modal');
             if (modal) {
@@ -262,7 +270,7 @@
         }
         toggleLoading(true);
         console.log('🔍 loadData: Iniciando para ID:', promptId);
-        
+
         try {
             const { data: prompt, error } = await client
                 .from('prompts')
@@ -273,24 +281,93 @@
             if (error) throw error;
             console.log('📦 loadData: Datos recibidos', prompt);
 
+            // --- VERIFICACIÓN DE PERMISOS ---
+            const currentUserId = currentUserSession.user.id;
+            const isOwner = prompt.user_id === currentUserId;
+            let canEdit = isOwner;
+
+            if (!isOwner) {
+                // Verificar si es compartido y qué permisos tiene
+                const { data: shareData } = await client
+                    .from('prompt_shares')
+                    .select('permission')
+                    .eq('prompt_id', promptId)
+                    .eq('shared_with', currentUserId)
+                    .single();
+
+                if (shareData) {
+                    console.log('👀 Modo Compartido. Permiso:', shareData.permission);
+                    canEdit = (shareData.permission === 'edit');
+                } else {
+                    console.warn('⚠️ No es dueño ni tiene share explícito. Asumiendo solo lectura (o público).');
+                    canEdit = false;
+                }
+            }
+
+            // Aplicar modo solo lectura si es necesario
+            if (!canEdit) {
+                setReadOnlyMode();
+            }
+
             // 1. Campos de Texto
-            if(ui.title) ui.title.value = prompt.title || '';
-            
+            if (ui.title) {
+                ui.title.value = prompt.title || '';
+                if (!canEdit) ui.title.disabled = true; // Deshabilitar si solo lectura
+                // Ajustar altura automáticamente al cargar
+                ui.title.style.height = 'auto';
+                ui.title.style.height = (ui.title.scrollHeight) + 'px';
+            }
+
             if (easyMDE) {
                 console.log('📝 loadData: Seteando EasyMDE');
                 easyMDE.value(prompt.content || '');
+                if (!canEdit) {
+                    // easyMDE.toggleReadOnly() puede fallar en algunas versiones
+                    if (easyMDE.codemirror) {
+                        easyMDE.codemirror.setOption('readOnly', true);
+                    }
+                    // Activar Vista Previa por defecto para que se vea como documento final
+                    setTimeout(() => {
+                        if (easyMDE.togglePreview) easyMDE.togglePreview();
+
+                        // Limpiar barra de herramientas: Ocultar todo menos el ojo (Preview)
+                        const toolbar = document.querySelector('.editor-toolbar');
+                        if (toolbar) {
+                            // Ocultar botones de edición
+                            const buttons = toolbar.querySelectorAll('a, button');
+                            buttons.forEach(btn => {
+                                if (!btn.classList.contains('preview')) {
+                                    btn.style.display = 'none';
+                                }
+                            });
+                            // Ocultar separadores
+                            const separators = toolbar.querySelectorAll('.separator');
+                            separators.forEach(s => s.style.display = 'none');
+                        }
+                    }, 100);
+                }
             } else {
                 console.warn('⚠️ loadData: EasyMDE no está listo, usando fallback');
                 const contentArea = document.getElementById('prompt-content');
-                if (contentArea) contentArea.value = prompt.content || '';
+                if (contentArea) {
+                    contentArea.value = prompt.content || '';
+                    if (!canEdit) contentArea.disabled = true;
+                }
             }
-            
-            if(ui.notes) ui.notes.value = prompt.description || '';
-            
+
+            if (ui.notes) {
+                ui.notes.value = prompt.description || '';
+                if (!canEdit) ui.notes.disabled = true;
+            }
+
             // 2. Header & Badges
-            if(ui.headerTitle) ui.headerTitle.textContent = prompt.title || 'Sin Título';
-            if(ui.headerBadges) ui.headerBadges.forEach(b => b.textContent = prompt.categories?.name || 'General');
-            
+            if (ui.headerTitle) {
+                ui.headerTitle.textContent = prompt.title || 'Sin Título';
+                // Añadir truncamiento visual si es muy largo para no romper el header
+                ui.headerTitle.classList.add('truncate', 'max-w-[200px]', 'lg:max-w-[400px]');
+            }
+            if (ui.headerBadges) ui.headerBadges.forEach(b => b.textContent = prompt.categories?.name || 'General');
+
             // 3. Estado Favorito
             isFavorite = prompt.is_favorite;
             updateFavoriteUI();
@@ -300,15 +377,15 @@
             updatePublicUI(isPublic);
 
             // 5. Icono de IA
-            if(prompt.ai_types) {
+            if (prompt.ai_types) {
                 const slug = prompt.ai_types.slug?.toLowerCase();
                 const colors = { 'chatgpt': 'bg-emerald-500', 'midjourney': 'bg-indigo-500', 'claude': 'bg-orange-500', 'gemini': 'bg-blue-500', 'dalle': 'bg-teal-500', 'stable-diffusion': 'bg-orange-600', 'deepseek': 'bg-blue-700', 'grok': 'bg-gray-900', 'copilot': 'bg-sky-600' };
-                
+
                 if (ui.icon) {
                     ui.icon.className = `w-10 h-10 rounded-xl flex items-center justify-center ${colors[slug] || 'bg-slate-700'}`;
                     if (prompt.ai_types.icon_svg) {
                         let svg = prompt.ai_types.icon_svg;
-                        if(svg.includes('<svg') && !svg.includes('w-')) svg = svg.replace('<svg', '<svg class="w-6 h-6 text-white"');
+                        if (svg.includes('<svg') && !svg.includes('w-')) svg = svg.replace('<svg', '<svg class="w-6 h-6 text-white"');
                         ui.icon.innerHTML = svg;
                     }
                 }
@@ -332,7 +409,7 @@
             }
 
             console.log('✅ loadData: Completado con éxito');
-            
+
             // Cargar conexiones (Segundo Cerebro)
             if (typeof loadConnections === 'function') loadConnections();
 
@@ -343,6 +420,33 @@
             console.log('🔓 loadData: Liberando loader');
             toggleLoading(false);
         }
+    }
+
+    // --- HELPER PARA MODO SOLO LECTURA ---
+    function setReadOnlyMode() {
+        console.log('🔒 Activando modo SOLO LECTURA');
+
+        // Deshabilitar Botón Guardar
+        if (ui.saveBtn) {
+            ui.saveBtn.disabled = true;
+            ui.saveBtn.textContent = 'Solo Lectura';
+            ui.saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            ui.saveBtn.onclick = null; // Quitar evento click
+        }
+
+        // Ocultar Botón Eliminar
+        if (ui.deleteBtn) {
+            ui.deleteBtn.classList.add('hidden');
+        }
+
+        // Ocultar opciones de compartir/público si no es dueño (opcional, pero recomendado)
+        const publicSection = document.getElementById('public-toggle-btn')?.parentElement;
+        if (publicSection) publicSection.style.pointerEvents = 'none'; // Deshabilitar toggle
+
+        const shareBtn = document.getElementById('share-btn');
+        if (shareBtn) shareBtn.classList.add('hidden'); // Ocultar botón compartir
+
+        safeShowToast('👁️ Modo Vista: No tienes permisos para editar', 'info');
     }
 
     // loadData ya no se llama automáticamente aquí, se llama desde initEditor
@@ -364,7 +468,7 @@
             safeShowToast(isFavorite ? 'Añadido a favoritos' : 'Quitado de favoritos');
         } catch (e) {
             console.error('❌ Error updating favorite:', e);
-            isFavorite = !isFavorite; 
+            isFavorite = !isFavorite;
             updateFavoriteUI();
             safeShowToast('Error al actualizar favorito', 'error');
         }
@@ -378,7 +482,7 @@
             const updates = { title: ui.title.value, content: contentVal, description: ui.notes.value, updated_at: new Date().toISOString() };
             await supabase.from('prompts').update(updates).eq('id', promptId);
             // Version
-            const { data: v } = await supabase.from('prompt_versions').select('version_number').eq('prompt_id', promptId).order('version_number', {ascending:false}).limit(1);
+            const { data: v } = await supabase.from('prompt_versions').select('version_number').eq('prompt_id', promptId).order('version_number', { ascending: false }).limit(1);
             const nextV = (v && v.length) ? v[0].version_number + 1 : 1;
             await supabase.from('prompt_versions').insert([{ prompt_id: promptId, version_number: nextV, content: contentVal }]);
             ui.headerTitle.textContent = updates.title;
@@ -390,8 +494,8 @@
         ui.historyModal.classList.remove('hidden'); ui.historyModal.classList.add('flex');
         ui.historyList.innerHTML = 'Cargando...';
         try {
-            const { data } = await supabase.from('prompt_versions').select('*').eq('prompt_id', promptId).order('version_number', {ascending:false});
-            
+            const { data } = await supabase.from('prompt_versions').select('*').eq('prompt_id', promptId).order('version_number', { ascending: false });
+
             if (!data || data.length === 0) {
                 ui.historyList.innerHTML = '<p class="text-slate-500 text-center py-4">No hay versiones guardadas.</p>';
                 return;
@@ -431,7 +535,7 @@
         if (!text) return;
         appendMessage('user', text);
         ui.aiInput.value = '';
-        
+
         const loadingId = 'ai-loading-' + Date.now();
         const loadingDiv = document.createElement('div');
         loadingDiv.id = loadingId;
@@ -470,7 +574,7 @@
     }
 
     if (ui.aiSendBtn) ui.aiSendBtn.onclick = sendMessage;
-    if (ui.aiInput) ui.aiInput.onkeypress = (e) => { if(e.key==='Enter') sendMessage(); };
+    if (ui.aiInput) ui.aiInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
     if (ui.aiToggleBtn) ui.aiToggleBtn.onclick = () => ui.aiSidebar.style.width = '20rem';
     if (ui.closeAiSidebar) ui.closeAiSidebar.onclick = () => ui.aiSidebar.style.width = '0';
 
@@ -484,7 +588,7 @@
                 const updates = { title: ui.title.value, content: contentVal, description: ui.notes.value, updated_at: new Date().toISOString() };
                 await supabase.from('prompts').update(updates).eq('id', promptId);
                 // Version
-                const { data: v } = await supabase.from('prompt_versions').select('version_number').eq('prompt_id', promptId).order('version_number', {ascending:false}).limit(1);
+                const { data: v } = await supabase.from('prompt_versions').select('version_number').eq('prompt_id', promptId).order('version_number', { ascending: false }).limit(1);
                 const nextV = (v && v.length) ? v[0].version_number + 1 : 1;
                 await supabase.from('prompt_versions').insert([{ prompt_id: promptId, version_number: nextV, content: contentVal }]);
                 ui.headerTitle.textContent = updates.title;
@@ -498,8 +602,8 @@
             ui.historyModal.classList.remove('hidden'); ui.historyModal.classList.add('flex');
             ui.historyList.innerHTML = 'Cargando...';
             try {
-                const { data } = await supabase.from('prompt_versions').select('*').eq('prompt_id', promptId).order('version_number', {ascending:false});
-                
+                const { data } = await supabase.from('prompt_versions').select('*').eq('prompt_id', promptId).order('version_number', { ascending: false });
+
                 if (!data || data.length === 0) {
                     ui.historyList.innerHTML = '<p class="text-slate-500 text-center py-4">No hay versiones guardadas.</p>';
                     return;
@@ -533,7 +637,7 @@
             }
         };
     }
-    
+
     if (ui.closeHistoryModal) {
         ui.closeHistoryModal.onclick = () => {
             ui.historyModal.classList.add('hidden');
@@ -588,7 +692,7 @@
     }
 
     // 4. SHARE & PUBLIC VISIBILITY LOGIC (Refactored)
-    
+
     // --- Lógica de Publicar (Comunidad) ---
     const publicToggleBtn = document.getElementById('public-toggle-btn');
     const publicToggleDot = document.getElementById('public-toggle-dot');
@@ -620,7 +724,7 @@
 
     async function loadSharedUsers() {
         if (!promptId || !supabase) return;
-        
+
         console.log('🔄 Cargando usuarios compartidos...');
         try {
             const { data: shares, error } = await supabase
@@ -681,18 +785,18 @@
     if (confirmRevokeBtn) {
         confirmRevokeBtn.onclick = async () => {
             if (!shareIdToRevoke) return;
-            
+
             confirmRevokeBtn.disabled = true;
             confirmRevokeBtn.textContent = 'Revocando...';
-            
+
             try {
                 const { error } = await supabase
                     .from('prompt_shares')
                     .delete()
                     .eq('id', shareIdToRevoke);
-                
+
                 if (error) throw error;
-                
+
                 safeShowToast('Acceso revocado');
                 if (revokeModal) {
                     revokeModal.classList.add('hidden');
@@ -718,7 +822,7 @@
             shareIdToRevoke = null;
         };
     }
-    
+
     if (closeShare) {
         closeShare.onclick = () => {
             shareModal.classList.add('hidden');
@@ -804,7 +908,7 @@
 
     async function searchPromptsToConnect(term) {
         if (!supabase || !currentUserSession) return;
-        
+
         try {
             let query = supabase
                 .from('prompts')
