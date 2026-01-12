@@ -23,199 +23,215 @@
             },
         }
     </script>
-    
+
     <!-- Supabase SDK & Auth Guard -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script>
-        (async function() {
-            console.log('🛡️ Dashboard: Iniciando verificación de sesión...');
-            
-            // Esperar a que initSupabase esté disponible
-            const checkSupabase = setInterval(async () => {
-                if (window.initSupabase) {
-                    clearInterval(checkSupabase);
-                    const supabase = window.initSupabase();
-                    
-                    if (!supabase) {
-                        console.error('❌ Supabase failed to init in Dashboard');
-                        return;
-                    }
+            (async function () {
+                console.log('🛡️ Dashboard: Iniciando verificación de sesión...');
 
-                    // Verificar Sesión
-                    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                // Esperar a que initSupabase esté disponible
+                const checkSupabase = setInterval(async () => {
+                    if (window.initSupabase) {
+                        clearInterval(checkSupabase);
+                        const supabase = window.initSupabase();
 
-                    if (sessionError || !session) {
-                        console.warn('⚠️ No hay sesión activa. Redirigiendo...');
-                        window.location.href = 'auth-login.html';
-                        return;
-                    }
-
-                    console.log('✅ Sesión activa para:', session.user.email);
-                    window.currentUser = session.user; // Guardar usuario globalmente
-                    
-                    // Cargar Perfil
-                    console.log('🔍 Buscando perfil en base de datos...');
-                    const { data: profile, error: profileError } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', session.user.id)
-                        .single();
-                        
-                    if (profileError) {
-                        console.error('❌ Error cargando perfil:', profileError.message);
-                        // Fallback: crear un perfil temporal en memoria si falla la BD
-                        window.currentProfile = {
-                            username: session.user.user_metadata.full_name || session.user.email.split('@')[0],
-                            email: session.user.email,
-                            avatar_url: null
-                        };
-                    } else {
-                        window.currentProfile = profile;
-                        console.log('👤 Perfil cargado correctamente:', profile);
-                    }
-
-                    // NOTIFICAR A TODOS LOS COMPONENTES (Sidebar, etc.)
-                    console.log('📢 Disparando evento userReady...');
-                    window.dispatchEvent(new CustomEvent('userReady', {
-                        detail: {
-                            session: session.user,
-                            profile: window.currentProfile
+                        if (!supabase) {
+                            console.error('❌ Supabase failed to init in Dashboard');
+                            return;
                         }
-                    }));
 
-                    // Actualizar header móvil directamente (por si acaso)
-                    const mobileAvatar = document.querySelector('header .bg-gradient-to-br');
-                    if (mobileAvatar) {
-                        const initial = (window.currentProfile?.username || session.user.email).charAt(0).toUpperCase();
-                        if (window.currentProfile?.avatar_url) {
-                            mobileAvatar.innerHTML = `<img src="${window.currentProfile.avatar_url}" class="w-full h-full object-cover rounded-full">`;
+                        // Verificar Sesión
+                        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+                        if (sessionError || !session) {
+                            console.warn('⚠️ No hay sesión activa. Redirigiendo...');
+                            window.location.href = 'auth-login.html';
+                            return;
+                        }
+
+                        console.log('✅ Sesión activa para:', session.user.email);
+                        window.currentUser = session.user; // Guardar usuario globalmente
+
+                        // Cargar Perfil
+                        console.log('🔍 Buscando perfil en base de datos...');
+                        const { data: profile, error: profileError } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', session.user.id)
+                            .single();
+
+                        if (profileError) {
+                            console.error('❌ Error cargando perfil:', profileError.message);
+                            // Fallback: crear un perfil temporal en memoria si falla la BD
+                            window.currentProfile = {
+                                username: session.user.user_metadata?.full_name
+                                    || session.user.user_metadata?.username
+                                    || session.user.user_metadata?.name
+                                    || session.user.email.split('@')[0],
+                                email: session.user.email,
+                                avatar_url: session.user.user_metadata?.avatar_url
+                            };
                         } else {
-                            mobileAvatar.textContent = initial;
+                            // Mezclar perfil de BD con metadata si faltan datos
+                            // PRIORIDAD DE VISUALIZACIÓN: Full Name > Username
+                            const displayName = profile?.full_name
+                                || session.user.user_metadata?.full_name
+                                || profile?.username
+                                || session.user.user_metadata?.username
+                                || session.user.user_metadata?.name
+                                || session.user.email.split('@')[0];
+
+                            window.currentProfile = {
+                                ...profile,
+                                username: displayName,
+                                avatar_url: profile.avatar_url || session.user.user_metadata?.avatar_url
+                            };
+                            console.log('👤 Perfil cargado correctamente:', window.currentProfile);
                         }
+
+                        // NOTIFICAR A TODOS LOS COMPONENTES (Sidebar, etc.)
+                        console.log('📢 Disparando evento userReady...');
+                        window.dispatchEvent(new CustomEvent('userReady', {
+                            detail: {
+                                session: session.user,
+                                profile: window.currentProfile
+                            }
+                        }));
+
+                        // Actualizar header móvil directamente (por si acaso)
+                        const mobileAvatar = document.querySelector('header .bg-gradient-to-br');
+                        if (mobileAvatar) {
+                            const initial = (window.currentProfile?.username || session.user.email).charAt(0).toUpperCase();
+                            if (window.currentProfile?.avatar_url) {
+                                mobileAvatar.innerHTML = `<img src="${window.currentProfile.avatar_url}" class="w-full h-full object-cover rounded-full">`;
+                            } else {
+                                mobileAvatar.textContent = initial;
+                            }
+                        }
+
+                        // CARGAR PROMPTS RECIENTES
+                        loadRecentPrompts(supabase, session.user.id);
+
+                        // CARGAR OPCIONES DEL MODAL
+                        loadSelectOptions(supabase);
+
+                        // CONFIGURAR FORMULARIO DE CREACIÓN
+                        initCreateForm(supabase, session.user.id);
                     }
+                }, 50); // Revisar cada 50ms
 
-                    // CARGAR PROMPTS RECIENTES
-                    loadRecentPrompts(supabase, session.user.id);
+                // Cargar Categorías e IAs para el formulario
+                async function loadSelectOptions(supabase) {
+                    console.log('🔍 Cargando opciones de selects...');
+                    try {
+                        // Categorías
+                        const { data: cats, error: catError } = await supabase.from('categories').select('id, name');
+                        console.log('📂 Categorías:', cats, 'Error:', catError); // DEBUG
 
-                    // CARGAR OPCIONES DEL MODAL
-                    loadSelectOptions(supabase);
+                        if (cats && cats.length > 0) {
+                            const select = document.getElementById('note-category');
+                            select.innerHTML = '<option value="">Seleccionar categoría</option>';
+                            cats.forEach(c => select.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+                        } else if (cats && cats.length === 0) {
+                            console.warn('⚠️ La tabla categories está vacía.');
+                        }
 
-                    // CONFIGURAR FORMULARIO DE CREACIÓN
-                    initCreateForm(supabase, session.user.id);
+                        // IAs
+                        const { data: ais, error: aiError } = await supabase.from('ai_types').select('id, name');
+                        console.log('🤖 IAs:', ais, 'Error:', aiError); // DEBUG
+
+                        if (ais && ais.length > 0) {
+                            const select = document.getElementById('note-ai');
+                            select.innerHTML = '<option value="">Seleccionar IA</option>';
+                            ais.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name}</option>`);
+                        } else if (ais && ais.length === 0) {
+                            console.warn('⚠️ La tabla ai_types está vacía.');
+                        }
+
+                    } catch (e) { console.error('Error loading options', e); }
                 }
-            }, 50); // Revisar cada 50ms
 
-            // Cargar Categorías e IAs para el formulario
-            async function loadSelectOptions(supabase) {
-                console.log('🔍 Cargando opciones de selects...');
-                try {
-                    // Categorías
-                    const { data: cats, error: catError } = await supabase.from('categories').select('id, name');
-                    console.log('📂 Categorías:', cats, 'Error:', catError); // DEBUG
+                // Función para cargar prompts
+                async function loadRecentPrompts(supabase, userId) {
+                    console.log('📚 Cargando prompts recientes...');
+                    const grid = document.getElementById('recent-prompts-grid');
+                    if (!grid) return;
 
-                    if (cats && cats.length > 0) {
-                        const select = document.getElementById('note-category');
-                        select.innerHTML = '<option value="">Seleccionar categoría</option>';
-                        cats.forEach(c => select.innerHTML += `<option value="${c.id}">${c.name}</option>`);
-                    } else if (cats && cats.length === 0) {
-                        console.warn('⚠️ La tabla categories está vacía.');
-                    }
+                    const createBtn = grid.firstElementChild.outerHTML;
+                    grid.innerHTML = createBtn + '<div class="col-span-full text-center text-slate-500 py-10 animate-pulse">Cargando tus prompts...</div>';
 
-                    // IAs
-                    const { data: ais, error: aiError } = await supabase.from('ai_types').select('id, name');
-                    console.log('🤖 IAs:', ais, 'Error:', aiError); // DEBUG
-
-                    if (ais && ais.length > 0) {
-                        const select = document.getElementById('note-ai');
-                        select.innerHTML = '<option value="">Seleccionar IA</option>';
-                        ais.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name}</option>`);
-                    } else if (ais && ais.length === 0) {
-                        console.warn('⚠️ La tabla ai_types está vacía.');
-                    }
-
-                } catch(e) { console.error('Error loading options', e); }
-            }
-
-            // Función para cargar prompts
-            async function loadRecentPrompts(supabase, userId) {
-                console.log('📚 Cargando prompts recientes...');
-                const grid = document.getElementById('recent-prompts-grid');
-                if (!grid) return;
-
-                const createBtn = grid.firstElementChild.outerHTML;
-                grid.innerHTML = createBtn + '<div class="col-span-full text-center text-slate-500 py-10 animate-pulse">Cargando tus prompts...</div>';
-
-                // JOIN con tablas relacionadas
-                const { data: prompts, error } = await supabase
-                    .from('prompts')
-                    .select(`
+                    // JOIN con tablas relacionadas
+                    const { data: prompts, error } = await supabase
+                        .from('prompts')
+                        .select(`
                         id, title, updated_at, description,
                         categories (name),
                         ai_types (name, slug, icon_svg)
                     `)
-                    .eq('user_id', userId)
-                    .order('updated_at', { ascending: false })
-                    .limit(6);
+                        .eq('user_id', userId)
+                        .order('updated_at', { ascending: false })
+                        .limit(6);
 
-                if (error) {
-                    console.error('Error:', error);
-                    grid.innerHTML = createBtn; // Fallback silencioso
-                    return;
-                }
-
-                grid.innerHTML = createBtn;
-
-                if (!prompts || prompts.length === 0) {
-                    const emptyState = document.createElement('div');
-                    emptyState.className = 'col-span-full flex flex-col items-center justify-center text-slate-500 py-10 border-2 border-dashed border-slate-700 rounded-xl';
-                    emptyState.innerHTML = '<p>No tienes prompts guardados aún.</p>';
-                    grid.appendChild(emptyState);
-                    return;
-                }
-
-                // Mapa de colores por slug de IA (para el fondo de la tarjeta)
-                const colors = {
-                    'chatgpt': 'bg-emerald-500',
-                    'midjourney': 'bg-indigo-500',
-                    'claude': 'bg-orange-500',
-                    'gemini': 'bg-blue-500',
-                    'stable-diffusion': 'bg-orange-600',
-                    'dalle': 'bg-teal-500',
-                    'deepseek': 'bg-blue-700', // Nuevo: Azul profundo
-                    'grok': 'bg-gray-900',     // Nuevo: Oscuro
-                    'copilot': 'bg-sky-600',   // Nuevo: Azul cielo Microsoft
-                    'default': 'bg-slate-700'
-                };
-
-                prompts.forEach(p => {
-                    const card = document.createElement('a');
-                    card.href = `edit-note.html?id=${p.id}`;
-                    card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
-                    
-                    const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
-                    const bgColor = colors[aiSlug] || colors['default'];
-                    const aiName = p.ai_types?.name || 'IA';
-                    const catName = p.categories?.name || 'General';
-                    
-                    // Icono: Usar de la BD tal cual
-                    let iconSvg = p.ai_types?.icon_svg || '<svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
-                    
-                    // Forzar tamaño w-12 h-12 (más grande)
-                    if (iconSvg.includes('<svg')) {
-                        // Reemplazar clases de tamaño existentes o inyectar nuevas
-                        if (iconSvg.includes('w-')) {
-                            iconSvg = iconSvg.replace(/w-\d+/, 'w-12').replace(/h-\d+/, 'h-12');
-                        } else {
-                            iconSvg = iconSvg.replace('<svg', '<svg class="w-12 h-12"');
-                        }
+                    if (error) {
+                        console.error('Error:', error);
+                        grid.innerHTML = createBtn; // Fallback silencioso
+                        return;
                     }
 
-                    // Fecha relativa simple
-                    const days = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
-                    const dateText = days === 0 ? 'Hoy' : `Hace ${days} días`;
+                    grid.innerHTML = createBtn;
 
-                    card.innerHTML = `
+                    if (!prompts || prompts.length === 0) {
+                        const emptyState = document.createElement('div');
+                        emptyState.className = 'col-span-full flex flex-col items-center justify-center text-slate-500 py-10 border-2 border-dashed border-slate-700 rounded-xl';
+                        emptyState.innerHTML = '<p>No tienes prompts guardados aún.</p>';
+                        grid.appendChild(emptyState);
+                        return;
+                    }
+
+                    // Mapa de colores por slug de IA (para el fondo de la tarjeta)
+                    const colors = {
+                        'chatgpt': 'bg-emerald-500',
+                        'midjourney': 'bg-indigo-500',
+                        'claude': 'bg-orange-500',
+                        'gemini': 'bg-blue-500',
+                        'stable-diffusion': 'bg-orange-600',
+                        'dalle': 'bg-teal-500',
+                        'deepseek': 'bg-blue-700', // Nuevo: Azul profundo
+                        'grok': 'bg-gray-900',     // Nuevo: Oscuro
+                        'copilot': 'bg-sky-600',   // Nuevo: Azul cielo Microsoft
+                        'default': 'bg-slate-700'
+                    };
+
+                    prompts.forEach(p => {
+                        const card = document.createElement('a');
+                        card.href = `edit-note.html?id=${p.id}`;
+                        card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
+
+                        const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
+                        const bgColor = colors[aiSlug] || colors['default'];
+                        const aiName = p.ai_types?.name || 'IA';
+                        const catName = p.categories?.name || 'General';
+
+                        // Icono: Usar de la BD tal cual
+                        let iconSvg = p.ai_types?.icon_svg || '<svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
+
+                        // Forzar tamaño w-12 h-12 (más grande)
+                        if (iconSvg.includes('<svg')) {
+                            // Reemplazar clases de tamaño existentes o inyectar nuevas
+                            if (iconSvg.includes('w-')) {
+                                iconSvg = iconSvg.replace(/w-\d+/, 'w-12').replace(/h-\d+/, 'h-12');
+                            } else {
+                                iconSvg = iconSvg.replace('<svg', '<svg class="w-12 h-12"');
+                            }
+                        }
+
+                        // Fecha relativa simple
+                        const days = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
+                        const dateText = days === 0 ? 'Hoy' : `Hace ${days} días`;
+
+                        card.innerHTML = `
                         <div class="h-[88px] ${bgColor} flex items-center justify-center relative group-hover:opacity-90 transition-opacity">
                             <!-- Diseño Glass Unificado -->
                             <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white shadow-sm">
@@ -234,67 +250,67 @@
                             </p>
                         </div>
                     `;
-                    grid.appendChild(card);
-                });
-            }
+                        grid.appendChild(card);
+                    });
+                }
 
-            // Función para inicializar el formulario de creación (Restaurada)
-            function initCreateForm(supabase, userId) {
-                const createForm = document.getElementById('create-form');
-                if (!createForm) return;
+                // Función para inicializar el formulario de creación (Restaurada)
+                function initCreateForm(supabase, userId) {
+                    const createForm = document.getElementById('create-form');
+                    if (!createForm) return;
 
-                // Remover listeners anteriores para evitar duplicados
-                const newForm = createForm.cloneNode(true);
-                createForm.parentNode.replaceChild(newForm, createForm);
+                    // Remover listeners anteriores para evitar duplicados
+                    const newForm = createForm.cloneNode(true);
+                    createForm.parentNode.replaceChild(newForm, createForm);
 
-                newForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const name = document.getElementById('note-name').value;
-                    const categoryId = document.getElementById('note-category').value;
-                    const aiTypeId = document.getElementById('note-ai').value;
-                    const submitBtn = newForm.querySelector('button[type="submit"]');
-                    const originalBtnContent = submitBtn.innerHTML;
+                    newForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
 
-                    if (!categoryId || !aiTypeId) {
-                        alert('Por favor selecciona una categoría y una IA');
-                        return;
-                    }
+                        const name = document.getElementById('note-name').value;
+                        const categoryId = document.getElementById('note-category').value;
+                        const aiTypeId = document.getElementById('note-ai').value;
+                        const submitBtn = newForm.querySelector('button[type="submit"]');
+                        const originalBtnContent = submitBtn.innerHTML;
 
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Creando...';
+                        if (!categoryId || !aiTypeId) {
+                            alert('Por favor selecciona una categoría y una IA');
+                            return;
+                        }
 
-                    try {
-                        console.log('📡 Guardando nuevo prompt...');
-                        const { data, error } = await supabase
-                            .from('prompts')
-                            .insert([{ 
-                                user_id: userId,
-                                title: name,
-                                content: '', 
-                                category_id: parseInt(categoryId),
-                                ai_type_id: parseInt(aiTypeId),
-                                description: '',
-                                is_public: false
-                            }])
-                            .select()
-                            .single();
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Creando...';
 
-                        if (error) throw error;
+                        try {
+                            console.log('📡 Guardando nuevo prompt...');
+                            const { data, error } = await supabase
+                                .from('prompts')
+                                .insert([{
+                                    user_id: userId,
+                                    title: name,
+                                    content: '',
+                                    category_id: parseInt(categoryId),
+                                    ai_type_id: parseInt(aiTypeId),
+                                    description: '',
+                                    is_public: false
+                                }])
+                                .select()
+                                .single();
 
-                        console.log('✅ Prompt creado:', data);
-                        window.location.href = `edit-note.html?id=${data.id}`;
+                            if (error) throw error;
 
-                    } catch (error) {
-                        console.error('❌ Error creando prompt:', error);
-                        if (error) console.log('🔍 Detalles:', error);
-                        alert(`Error: ${error.message || 'Error desconocido'}`);
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalBtnContent;
-                    }
-                });
-            }
-        })();
+                            console.log('✅ Prompt creado:', data);
+                            window.location.href = `edit-note.html?id=${data.id}`;
+
+                        } catch (error) {
+                            console.error('❌ Error creando prompt:', error);
+                            if (error) console.log('🔍 Detalles:', error);
+                            alert(`Error: ${error.message || 'Error desconocido'}`);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnContent;
+                        }
+                    });
+                }
+            })();
     </script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -449,7 +465,7 @@
 
         // Delegación de Eventos para el botón de crear (porque se recrea dinámicamente)
         if (grid) {
-            grid.addEventListener('click', function(e) {
+            grid.addEventListener('click', function (e) {
                 const btn = e.target.closest('#create-new-btn');
                 if (btn) {
                     openModal();

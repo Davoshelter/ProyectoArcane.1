@@ -14,7 +14,7 @@
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { 'sans': ['Inter', 'sans-serif'], 'mono': ['JetBrains Mono', 'monospace'] } } } }
     </script>
-    
+
     <!-- Supabase SDK & Config -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
@@ -48,7 +48,7 @@
         <div class="p-6 lg:p-8">
 
             <!-- Page Header -->
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div class="flex flex-col gap-6 mb-8 lg:items-center">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,12 +58,12 @@
                     </div>
                     <div>
                         <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">My Unit</h1>
-                        <p class="text-slate-400 mt-1">Todos tus prompts organizados • <span id="total-count">24</span>
+                        <p class="text-slate-400 mt-1">Todos tus prompts organizados • <span id="total-count">...</span>
                             prompts</p>
                     </div>
                 </div>
                 <!-- Search -->
-                <div class="relative max-w-sm w-full">
+                <div class="relative max-w-2xl w-full">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -88,9 +88,13 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="prompts-grid">
                     <!-- Los prompts se cargarán dinámicamente -->
                     <div class="col-span-full text-center py-12 text-slate-500">
-                        <svg class="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg class="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-500"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
                         </svg>
                         Cargando biblioteca...
                     </div>
@@ -107,99 +111,99 @@
     <script src="js/sidebar.js"></script>
     <script src="js/pagination.js"></script>
     <script src="js/main.js"></script>
-    
+
     <script>
-        (async function() {
-            // Estado Global
-            let currentUser = null;
-            let currentCategoryFilter = null;
-            let currentPage = 1;
-            const itemsPerPage = 8;
-            let totalItems = 0;
+            (async function () {
+                // Estado Global
+                let currentUser = null;
+                let currentCategoryFilter = null;
+                let currentPage = 1;
+                const itemsPerPage = 8;
+                let totalItems = 0;
 
-            // Inicializar
-            const checkSupabase = setInterval(async () => {
-                if (window.initSupabase) {
-                    clearInterval(checkSupabase);
-                    const supabase = window.initSupabase();
-                    await initPage(supabase);
-                }
-            }, 50);
+                // Inicializar
+                const checkSupabase = setInterval(async () => {
+                    if (window.initSupabase) {
+                        clearInterval(checkSupabase);
+                        const supabase = window.initSupabase();
+                        await initPage(supabase);
+                    }
+                }, 50);
 
-            async function initPage(supabase) {
-                // 1. Verificar Sesión & Perfil (Igual que Dashboard)
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    window.location.href = 'auth-login.html';
-                    return;
-                }
-                currentUser = session.user;
+                async function initPage(supabase) {
+                    // 1. Verificar Sesión & Perfil (Igual que Dashboard)
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) {
+                        window.location.href = 'auth-login.html';
+                        return;
+                    }
+                    currentUser = session.user;
 
-                // Cargar perfil para el Sidebar
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single();
-                
-                // Notificar al Sidebar
-                if (window.PromptHub && window.PromptHub.User) {
-                    window.PromptHub.User.setUserData({
-                        email: session.user.email,
-                        username: profile?.username,
-                        avatar_url: profile?.avatar_url
-                    });
-                }
+                    // Cargar perfil para el Sidebar
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', session.user.id)
+                        .single();
 
-                // 2. Cargar Carpetas (Conteos)
-                loadFolders(supabase);
+                    // Notificar al Sidebar
+                    if (window.PromptHub && window.PromptHub.User) {
+                        window.PromptHub.User.setUserData({
+                            email: session.user.email,
+                            username: profile?.username,
+                            avatar_url: profile?.avatar_url
+                        });
+                    }
 
-                // 3. Cargar Prompts Iniciales
-                loadPrompts(supabase);
+                    // 2. Cargar Carpetas (Conteos)
+                    loadFolders(supabase);
 
-                // Event Listeners
-                setupSearch(supabase);
-            }
+                    // 3. Cargar Prompts Iniciales
+                    loadPrompts(supabase);
 
-            // --- CARPETAS / CATEGORÍAS ---
-            async function loadFolders(supabase) {
-                // Obtener conteo por categoría
-                // Nota: Supabase no tiene "GROUP BY" directo fácil en el cliente JS estándar sin RPC,
-                // así que haremos una consulta ligera de todos los IDs y categorías para contar localmente.
-                const { data: prompts } = await supabase
-                    .from('prompts')
-                    .select('category_id, categories(name, slug)')
-                    .eq('user_id', currentUser.id);
-
-                const counts = {};
-                if (prompts) {
-                    prompts.forEach(p => {
-                        const name = p.categories?.name || 'Sin Categoría';
-                        const id = p.category_id;
-                        if (!counts[id]) counts[id] = { name, count: 0, id };
-                        counts[id].count++;
-                    });
+                    // Event Listeners
+                    setupSearch(supabase);
                 }
 
-                // Renderizar Carpetas
-                const container = document.createElement('div');
-                container.className = 'mb-8';
-                container.innerHTML = `
+                // --- CARPETAS / CATEGORÍAS ---
+                async function loadFolders(supabase) {
+                    // Obtener conteo por categoría
+                    // Nota: Supabase no tiene "GROUP BY" directo fácil en el cliente JS estándar sin RPC,
+                    // así que haremos una consulta ligera de todos los IDs y categorías para contar localmente.
+                    const { data: prompts } = await supabase
+                        .from('prompts')
+                        .select('category_id, categories(name, slug)')
+                        .eq('user_id', currentUser.id);
+
+                    const counts = {};
+                    if (prompts) {
+                        prompts.forEach(p => {
+                            const name = p.categories?.name || 'Sin Categoría';
+                            const id = p.category_id;
+                            if (!counts[id]) counts[id] = { name, count: 0, id };
+                            counts[id].count++;
+                        });
+                    }
+
+                    // Renderizar Carpetas
+                    const container = document.createElement('div');
+                    container.className = 'mb-8';
+                    container.innerHTML = `
                     <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                         Carpetas
                     </h2>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4" id="folders-grid"></div>
                 `;
-                
-                // Insertar antes del grid de prompts
-                const promptsSection = document.querySelector('.mb-8'); // El div de "Todos los Prompts"
-                promptsSection.parentNode.insertBefore(container, promptsSection);
 
-                const grid = document.getElementById('folders-grid');
-                
-                // Botón "Ver Todo"
-                grid.innerHTML = `
+                    // Insertar antes del grid de prompts
+                    const promptsSection = document.querySelector('.mb-8'); // El div de "Todos los Prompts"
+                    promptsSection.parentNode.insertBefore(container, promptsSection);
+
+                    const grid = document.getElementById('folders-grid');
+
+                    // Botón "Ver Todo"
+                    grid.innerHTML = `
                     <button onclick="filterByCategory(null)" class="folder-btn flex flex-col items-center p-4 bg-slate-800 border ${!currentCategoryFilter ? 'border-indigo-500' : 'border-slate-700'} rounded-xl hover:border-indigo-500 transition-colors group">
                         <div class="w-12 h-12 flex items-center justify-center text-indigo-400 mb-2 group-hover:scale-110 transition-transform">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
@@ -209,23 +213,23 @@
                     </button>
                 `;
 
-                // Mapa de colores para carpetas
-                const catColors = {
-                    'Programación': 'text-indigo-400 hover:border-indigo-500',
-                    'Escritura': 'text-violet-400 hover:border-violet-500',
-                    'Arte Digital': 'text-orange-400 hover:border-orange-500',
-                    'Diseño': 'text-pink-400 hover:border-pink-500',
-                    'Análisis': 'text-blue-400 hover:border-blue-500',
-                    'Fotografía': 'text-emerald-400 hover:border-emerald-500',
-                    'Productividad': 'text-orange-400 hover:border-orange-500' // Restaurado Naranja
-                };
+                    // Mapa de colores para carpetas
+                    const catColors = {
+                        'Programación': 'text-indigo-400 hover:border-indigo-500',
+                        'Escritura': 'text-violet-400 hover:border-violet-500',
+                        'Arte Digital': 'text-orange-400 hover:border-orange-500',
+                        'Diseño': 'text-pink-400 hover:border-pink-500',
+                        'Análisis': 'text-blue-400 hover:border-blue-500',
+                        'Fotografía': 'text-emerald-400 hover:border-emerald-500',
+                        'Productividad': 'text-orange-400 hover:border-orange-500' // Restaurado Naranja
+                    };
 
-                Object.values(counts).forEach(cat => {
-                    if (!cat.id) return;
-                    const colorClass = catColors[cat.name] || 'text-slate-400 hover:border-indigo-500';
-                    const iconColor = colorClass.split(' ')[0]; // Extraer solo el color de texto para el icono
-                    
-                    grid.innerHTML += `
+                    Object.values(counts).forEach(cat => {
+                        if (!cat.id) return;
+                        const colorClass = catColors[cat.name] || 'text-slate-400 hover:border-indigo-500';
+                        const iconColor = colorClass.split(' ')[0]; // Extraer solo el color de texto para el icono
+
+                        grid.innerHTML += `
                         <button onclick="filterByCategory(${cat.id})" class="folder-btn flex flex-col items-center p-4 bg-slate-800 border border-slate-700 rounded-xl ${colorClass.split(' ')[1]} transition-colors group">
                             <div class="w-12 h-12 flex items-center justify-center ${iconColor} mb-2 group-hover:scale-110 transition-transform">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
@@ -234,106 +238,106 @@
                             <span class="text-xs text-slate-500">${cat.count} prompts</span>
                         </button>
                     `;
-                });
+                    });
 
-                // Exponer funcion global
-                window.filterByCategory = (id) => {
-                    currentCategoryFilter = id;
-                    currentPage = 1;
-                    loadPrompts(supabase);
-                    
-                    // Actualizar estilos activos
-                    document.querySelectorAll('.folder-btn').forEach(btn => btn.classList.remove('border-indigo-500'));
-                    event.currentTarget.classList.add('border-indigo-500');
-                };
-            }
+                    // Exponer funcion global
+                    window.filterByCategory = (id) => {
+                        currentCategoryFilter = id;
+                        currentPage = 1;
+                        loadPrompts(supabase);
 
-            // --- PROMPTS Y PAGINACIÓN ---
-            async function loadPrompts(supabase, searchTerm = '') {
-                const grid = document.getElementById('prompts-grid');
-                const countSpan = document.getElementById('total-count');
-                
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><svg class="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Cargando...</div>';
+                        // Actualizar estilos activos
+                        document.querySelectorAll('.folder-btn').forEach(btn => btn.classList.remove('border-indigo-500'));
+                        event.currentTarget.classList.add('border-indigo-500');
+                    };
+                }
 
-                try {
-                    let query = supabase
-                        .from('prompts')
-                        .select(`
+                // --- PROMPTS Y PAGINACIÓN ---
+                async function loadPrompts(supabase, searchTerm = '') {
+                    const grid = document.getElementById('prompts-grid');
+                    const countSpan = document.getElementById('total-count');
+
+                    grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><svg class="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Cargando...</div>';
+
+                    try {
+                        let query = supabase
+                            .from('prompts')
+                            .select(`
                             id, title, updated_at, description,
                             categories (name),
                             ai_types (name, slug, icon_svg)
                         `, { count: 'exact' })
-                        .eq('user_id', currentUser.id)
-                        .order('updated_at', { ascending: false });
+                            .eq('user_id', currentUser.id)
+                            .order('updated_at', { ascending: false });
 
-                    // Filtros
-                    if (currentCategoryFilter) {
-                        query = query.eq('category_id', currentCategoryFilter);
-                    }
-                    if (searchTerm) {
-                        query = query.ilike('title', `%${searchTerm}%`);
-                    }
-
-                    // Paginación
-                    const from = (currentPage - 1) * itemsPerPage;
-                    const to = from + itemsPerPage - 1;
-                    query = query.range(from, to);
-
-                    const { data: prompts, count, error } = await query;
-
-                    if (error) throw error;
-
-                    totalItems = count;
-                    countSpan.textContent = totalItems;
-
-                    renderGrid(prompts);
-                    renderPagination();
-
-                } catch (e) {
-                    console.error('Error:', e);
-                    grid.innerHTML = `<div class="col-span-full text-red-400 text-center">Error al cargar: ${e.message}</div>`;
-                }
-            }
-
-            function renderGrid(prompts) {
-                const grid = document.getElementById('prompts-grid');
-                grid.innerHTML = '';
-
-                if (prompts.length === 0) {
-                    grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12">No se encontraron prompts.</div>';
-                    return;
-                }
-
-                const colors = {
-                    'chatgpt': 'bg-emerald-500', 'midjourney': 'bg-indigo-500', 'claude': 'bg-orange-500',
-                    'gemini': 'bg-blue-500', 'dalle': 'bg-teal-500', 'stable-diffusion': 'bg-orange-600',
-                    'deepseek': 'bg-blue-700', 'grok': 'bg-gray-900', 'copilot': 'bg-sky-600', 'default': 'bg-slate-700'
-                };
-
-                prompts.forEach(p => {
-                    const card = document.createElement('a');
-                    card.href = `edit-note.html?id=${p.id}`;
-                    card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
-                    
-                    const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
-                    const bgColor = colors[aiSlug] || colors['default'];
-                    const aiName = p.ai_types?.name || 'IA';
-                    const catName = p.categories?.name || 'General';
-                    
-                    // ICONO IDENTICO AL DASHBOARD (Tamaño w-12 h-12)
-                    let iconSvg = p.ai_types?.icon_svg || '<svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
-                    if (iconSvg.includes('<svg')) {
-                        if (iconSvg.includes('w-')) {
-                            iconSvg = iconSvg.replace(/w-\d+/, 'w-12').replace(/h-\d+/, 'h-12');
-                        } else {
-                            iconSvg = iconSvg.replace('<svg', '<svg class="w-12 h-12"');
+                        // Filtros
+                        if (currentCategoryFilter) {
+                            query = query.eq('category_id', currentCategoryFilter);
                         }
+                        if (searchTerm) {
+                            query = query.ilike('title', `%${searchTerm}%`);
+                        }
+
+                        // Paginación
+                        const from = (currentPage - 1) * itemsPerPage;
+                        const to = from + itemsPerPage - 1;
+                        query = query.range(from, to);
+
+                        const { data: prompts, count, error } = await query;
+
+                        if (error) throw error;
+
+                        totalItems = count;
+                        countSpan.textContent = totalItems;
+
+                        renderGrid(prompts);
+                        renderPagination();
+
+                    } catch (e) {
+                        console.error('Error:', e);
+                        grid.innerHTML = `<div class="col-span-full text-red-400 text-center">Error al cargar: ${e.message}</div>`;
+                    }
+                }
+
+                function renderGrid(prompts) {
+                    const grid = document.getElementById('prompts-grid');
+                    grid.innerHTML = '';
+
+                    if (prompts.length === 0) {
+                        grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12">No se encontraron prompts.</div>';
+                        return;
                     }
 
-                    const days = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
-                    const dateText = days === 0 ? 'Hoy' : `Hace ${days} días`;
+                    const colors = {
+                        'chatgpt': 'bg-emerald-500', 'midjourney': 'bg-indigo-500', 'claude': 'bg-orange-500',
+                        'gemini': 'bg-blue-500', 'dalle': 'bg-teal-500', 'stable-diffusion': 'bg-orange-600',
+                        'deepseek': 'bg-blue-700', 'grok': 'bg-gray-900', 'copilot': 'bg-sky-600', 'default': 'bg-slate-700'
+                    };
 
-                    card.innerHTML = `
+                    prompts.forEach(p => {
+                        const card = document.createElement('a');
+                        card.href = `edit-note.html?id=${p.id}`;
+                        card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
+
+                        const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
+                        const bgColor = colors[aiSlug] || colors['default'];
+                        const aiName = p.ai_types?.name || 'IA';
+                        const catName = p.categories?.name || 'General';
+
+                        // ICONO IDENTICO AL DASHBOARD (Tamaño w-12 h-12)
+                        let iconSvg = p.ai_types?.icon_svg || '<svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
+                        if (iconSvg.includes('<svg')) {
+                            if (iconSvg.includes('w-')) {
+                                iconSvg = iconSvg.replace(/w-\d+/, 'w-12').replace(/h-\d+/, 'h-12');
+                            } else {
+                                iconSvg = iconSvg.replace('<svg', '<svg class="w-12 h-12"');
+                            }
+                        }
+
+                        const days = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
+                        const dateText = days === 0 ? 'Hoy' : `Hace ${days} días`;
+
+                        card.innerHTML = `
                         <div class="h-[88px] ${bgColor} flex items-center justify-center relative group-hover:opacity-90 transition-opacity">
                             <!-- Diseño Glass Identico al Dashboard -->
                             <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white shadow-sm">
@@ -349,52 +353,52 @@
                             <p class="text-slate-500 text-xs mt-auto">Editado: ${dateText}</p>
                         </div>
                     `;
-                    grid.appendChild(card);
-                });
-            }
-
-            function renderPagination() {
-                const container = document.getElementById('pagination-container'); // Necesitas agregar este div al HTML si no existe
-                if (!container) return; // Si no hay contenedor, salimos (o lo creamos dinámicamente)
-                
-                // Crear contenedor si falta (fallback)
-                if (!document.getElementById('pagination-controls')) {
-                    const controls = document.createElement('div');
-                    controls.id = 'pagination-controls';
-                    controls.className = 'flex justify-center gap-4 mt-8';
-                    container.appendChild(controls);
+                        grid.appendChild(card);
+                    });
                 }
-                const controls = document.getElementById('pagination-controls');
-                
-                const totalPages = Math.ceil(totalItems / itemsPerPage);
-                
-                controls.innerHTML = `
+
+                function renderPagination() {
+                    const container = document.getElementById('pagination-container'); // Necesitas agregar este div al HTML si no existe
+                    if (!container) return; // Si no hay contenedor, salimos (o lo creamos dinámicamente)
+
+                    // Crear contenedor si falta (fallback)
+                    if (!document.getElementById('pagination-controls')) {
+                        const controls = document.createElement('div');
+                        controls.id = 'pagination-controls';
+                        controls.className = 'flex justify-center gap-4 mt-8';
+                        container.appendChild(controls);
+                    }
+                    const controls = document.getElementById('pagination-controls');
+
+                    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                    controls.innerHTML = `
                     <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-300 disabled:opacity-50 hover:bg-slate-700">Anterior</button>
                     <span class="px-4 py-2 text-slate-400">Página ${currentPage} de ${totalPages || 1}</span>
                     <button ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-300 disabled:opacity-50 hover:bg-slate-700">Siguiente</button>
                 `;
 
-                window.changePage = (newPage) => {
-                    currentPage = newPage;
-                    loadPrompts(window.initSupabase());
-                };
-            }
-
-            function setupSearch(supabase) {
-                const searchInput = document.getElementById('search-input');
-                let timeout = null;
-                if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        clearTimeout(timeout);
-                        timeout = setTimeout(() => {
-                            currentPage = 1;
-                            loadPrompts(supabase, e.target.value);
-                        }, 300);
-                    });
+                    window.changePage = (newPage) => {
+                        currentPage = newPage;
+                        loadPrompts(window.initSupabase());
+                    };
                 }
-            }
 
-        })();
+                function setupSearch(supabase) {
+                    const searchInput = document.getElementById('search-input');
+                    let timeout = null;
+                    if (searchInput) {
+                        searchInput.addEventListener('input', (e) => {
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => {
+                                currentPage = 1;
+                                loadPrompts(supabase, e.target.value);
+                            }, 300);
+                        });
+                    }
+                }
+
+            })();
     </script>
 
 </body>
