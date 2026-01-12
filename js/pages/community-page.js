@@ -173,7 +173,17 @@
             categoryEl.style.backgroundColor = color + '20';
             categoryEl.style.color = color;
         }
-        if (contentEl) contentEl.textContent = prompt.content || 'Sin contenido';
+        if (contentEl) {
+            const rawContent = prompt.content || 'Sin contenido';
+            if (typeof marked !== 'undefined') {
+                contentEl.innerHTML = marked.parse(rawContent);
+            } else {
+                contentEl.textContent = rawContent;
+                contentEl.classList.add('whitespace-pre-wrap', 'font-mono');
+            }
+            // Guardamos el contenido crudo en un atributo data para poder copiarlo después
+            contentEl.setAttribute('data-raw-content', rawContent);
+        }
 
         // Actualizar icono
         if (iconEl && window.PromptCard) {
@@ -240,7 +250,7 @@
         const copyBtn = document.getElementById('copy-prompt-btn');
         if (copyBtn) {
             copyBtn.addEventListener('click', () => {
-                const content = document.getElementById('modal-content')?.textContent;
+                const content = document.getElementById('modal-content')?.getAttribute('data-raw-content');
                 if (content) {
                     navigator.clipboard.writeText(content).then(() => {
                         copyBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ¡Copiado!';
