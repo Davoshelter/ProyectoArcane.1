@@ -202,24 +202,38 @@ const Clipboard = {
      * Muestra un toast de confirmación
      * @param {string} message - Mensaje a mostrar
      */
-    showToast(message) {
-        // Crear toast si no existe
-        let toast = document.getElementById('copy-toast');
+    showToast(message, type = 'success') {
+        let toast = document.getElementById('global-toast');
         if (!toast) {
             toast = document.createElement('div');
-            toast.id = 'copy-toast';
-            toast.className = 'fixed bottom-4 right-4 bg-teal-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 z-50';
+            toast.id = 'global-toast';
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-3 rounded-2xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0';
             document.body.appendChild(toast);
         }
 
-        toast.textContent = message;
-        toast.classList.remove('translate-y-full', 'opacity-0');
+        const colors = {
+            'success': 'bg-emerald-500 text-white',
+            'error': 'bg-red-500 text-white',
+            'info': 'bg-indigo-500 text-white'
+        };
+
+        const icons = {
+            'success': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+            'error': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+            'info': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+        };
+
+        toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-3 rounded-2xl shadow-2xl transition-all duration-300 transform translate-y-0 opacity-100 ${colors[type] || colors.success}`;
+        toast.innerHTML = `${icons[type] || icons.success} <span class="font-medium">${message}</span>`;
 
         setTimeout(() => {
-            toast.classList.add('translate-y-full', 'opacity-0');
-        }, 2000);
+            toast.classList.add('translate-y-20', 'opacity-0');
+        }, 3000);
     }
 };
+
+// Alias global para simplicidad
+window.showToast = (msg, type) => Clipboard.showToast(msg, type);
 
 /* ─────────────────────────────────────────────────────────────────────────────
    THEME UTILITIES (Por si se quiere toggle dark/light en el futuro)

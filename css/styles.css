@@ -482,3 +482,169 @@ html {
 .version-item:hover {
     transform: translateX(4px);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EASYMDE CUSTOM STYLES (Notion Dark Theme)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.EasyMDEContainer {
+    background: transparent !important;
+    border: none !important;
+}
+
+.editor-toolbar {
+    background-color: rgba(15, 23, 42, 0.8) !important; /* bg-slate-900/80 */
+    border: 1px solid rgba(51, 65, 85, 0.5) !important; /* border-slate-700/50 */
+    border-radius: 0.75rem !important;
+    padding: 0.5rem !important;
+    position: sticky !important;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(12px);
+    margin-bottom: 1rem !important;
+}
+
+.editor-toolbar button {
+    color: #94a3b8 !important; /* text-slate-400 */
+    border: none !important;
+    border-radius: 0.5rem !important;
+    transition: all 0.2s ease;
+}
+
+.editor-toolbar button:hover, .editor-toolbar button.active {
+    background-color: rgba(51, 65, 85, 0.5) !important; /* bg-slate-700/50 */
+    color: #f8fafc !important; /* text-slate-50 */
+}
+
+.editor-toolbar i.separator {
+    border-right: 1px solid rgba(51, 65, 85, 0.5) !important;
+    margin: 0 6px !important;
+}
+
+.CodeMirror {
+    background: transparent !important;
+    border: none !important;
+    color: #cbd5e1 !important; /* text-slate-300 */
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
+    padding: 0 !important;
+}
+
+.CodeMirror-cursor {
+    border-left: 2px solid #6366f1 !important; /* Indigo cursor */
+}
+
+/* Fix Selection Background (No more white selection) */
+.CodeMirror-selected {
+    background-color: rgba(99, 102, 241, 0.3) !important; /* Indigo selection */
+}
+
+.CodeMirror-focused .CodeMirror-selected {
+    background-color: rgba(99, 102, 241, 0.4) !important;
+}
+
+.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection {
+    background-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Headers visuales en el editor */
+.cm-header-1 { font-size: 1.75em; font-weight: 700; color: #10b981 !important; line-height: 1.5; }
+.cm-header-2 { font-size: 1.5em; font-weight: 600; color: #facc15 !important; line-height: 1.5; }
+.cm-header-3 { font-size: 1.25em; font-weight: 600; color: #fb7185 !important; line-height: 1.5; }
+.cm-strong { color: #f8fafc !important; font-weight: 700; }
+.cm-em { color: #94a3b8 !important; font-style: italic; }
+.cm-quote { color: #64748b !important; font-style: italic; }
+
+/* Ocultar elementos innecesarios */
+.editor-statusbar { display: none !important; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   EASYMDE PREVIEW & SIDE-BY-SIDE FIXES
+   ───────────────────────────────────────────────────────────────────────────── */
+.editor-preview, .editor-preview-side {
+    background-color: #0f172a !important; /* bg-slate-900 */
+    color: #cbd5e1 !important; /* text-slate-300 */
+    border-color: #334155 !important; /* border-slate-700 */
+    font-family: 'Inter', sans-serif !important;
+    padding: 2rem !important;
+    line-height: 1.6 !important;
+}
+
+/* Forzar tamaños en PREVIEW para que no se vean planos */
+.editor-preview h1, .editor-preview-side h1 { 
+    font-size: 2em !important; 
+    font-weight: 800 !important;
+    color: #10b981 !important; 
+    border-bottom: 1px solid #334155; 
+    padding-bottom: 0.5rem; 
+    margin-top: 1.5rem !important;
+    margin-bottom: 1rem !important;
+}
+.editor-preview h2, .editor-preview-side h2 { 
+    font-size: 1.5em !important; 
+    font-weight: 700 !important;
+    color: #facc15 !important; 
+    margin-top: 1.2rem !important;
+    margin-bottom: 0.8rem !important;
+}
+.editor-preview h3, .editor-preview-side h3 { 
+    font-size: 1.25em !important; 
+    font-weight: 600 !important;
+    color: #fb7185 !important; 
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+.editor-preview p, .editor-preview-side p {
+    margin-bottom: 1rem !important;
+}
+.editor-preview ul, .editor-preview-side ul {
+    list-style-type: disc !important;
+    padding-left: 1.5rem !important;
+    margin-bottom: 1rem !important;
+}
+.editor-preview ol, .editor-preview-side ol {
+    list-style-type: decimal !important;
+    padding-left: 1.5rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Fix Code Blocks in Preview (Dark Background) */
+.editor-preview pre, .editor-preview-side pre { 
+    background-color: #020617 !important; /* bg-slate-950 */
+    border: 1px solid #1e293b !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    margin: 1rem 0 !important;
+    overflow-x: auto !important;
+}
+
+.editor-preview code, .editor-preview-side code {
+    background-color: transparent !important;
+    color: #e2e8f0 !important; /* slate-200 */
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Fix Side-by-Side Layout */
+.EasyMDEContainer.sided--no-fullscreen .CodeMirror-sided {
+    width: 50% !important;
+    right: 50% !important; /* Mover el editor a la izquierda */
+    position: fixed !important;
+    top: 72px !important;
+    bottom: 0 !important;
+    height: auto !important;
+    border-right: 1px solid #334155 !important;
+    z-index: 30 !important;
+    background: #020617 !important; /* slate-950 */
+}
+
+.EasyMDEContainer .editor-preview-side {
+    position: fixed !important;
+    top: 72px !important; 
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 50% !important;
+    height: auto !important;
+    z-index: 30 !important;
+    border-left: none !important;
+    margin: 0 !important;
+}

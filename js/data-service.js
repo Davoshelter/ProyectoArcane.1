@@ -295,19 +295,62 @@
     }
 
     // =========================================================================
-    // PROMPTS COMPARTIDOS (Nota: No hay tabla de sharing, simulamos con public)
+    // PROMPTS COMPARTIDOS (Tabla prompt_shares)
     // =========================================================================
     async function getSharedWithMe(userId) {
-        // La tabla de compartición no existe en el schema actual
-        // Retornamos array vacío - se puede implementar cuando exista la tabla
-        console.log('ℹ️ Shared prompts: No sharing table in schema');
-        return { data: [], count: 0 };
+        const supabase = getSupabase();
+        if (!supabase || !userId) return { data: [], count: 0 };
+
+        try {
+            const { data, error, count } = await supabase
+                .from('prompt_shares')
+                .select(`
+                    id,
+                    permission,
+                    created_at,
+                    prompts (
+                        id, title, content, description, view_count, updated_at,
+                        categories (name, color),
+                        ai_types (name, slug, icon_svg)
+                    ),
+                    profiles:shared_by (username, avatar_url)
+                `, { count: 'exact' })
+                .eq('shared_with', userId);
+
+            if (error) throw error;
+            return { data: data || [], count: count || 0 };
+        } catch (e) {
+            console.error('❌ Error loading shared with me:', e);
+            return { data: [], count: 0 };
+        }
     }
 
     async function getMySharedPrompts(userId) {
-        // La tabla de compartición no existe en el schema actual
-        console.log('ℹ️ My shared prompts: No sharing table in schema');
-        return { data: [], count: 0 };
+        const supabase = getSupabase();
+        if (!supabase || !userId) return { data: [], count: 0 };
+
+        try {
+            const { data, error, count } = await supabase
+                .from('prompt_shares')
+                .select(`
+                    id,
+                    permission,
+                    shared_with,
+                    prompts (
+                        id, title, content, description, view_count, updated_at,
+                        categories (name, color),
+                        ai_types (name, slug, icon_svg)
+                    ),
+                    profiles:shared_with (username, avatar_url)
+                `, { count: 'exact' })
+                .eq('shared_by', userId);
+
+            if (error) throw error;
+            return { data: data || [], count: count || 0 };
+        } catch (e) {
+            console.error('❌ Error loading my shared prompts:', e);
+            return { data: [], count: 0 };
+        }
     }
 
     // =========================================================================

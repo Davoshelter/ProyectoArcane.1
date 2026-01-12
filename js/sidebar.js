@@ -172,14 +172,40 @@ async function logoutUser() {
             }
         });
 
-        // 3. Cargar datos si ya existen
-        if (window.currentUser) {
-            updateSidebarUser({
-                email: window.currentUser.email,
-                username: window.currentProfile?.username,
-                avatar_url: window.currentProfile?.avatar_url
-            });
+        // 3. Cargar datos si ya existen o buscarlos
+        async function fetchUserForSidebar() {
+            if (window.currentUser && window.currentProfile) {
+                updateSidebarUser({
+                    email: window.currentUser.email,
+                    username: window.currentProfile.username,
+                    avatar_url: window.currentProfile.avatar_url
+                });
+                return;
+            }
+
+            // Si no hay datos globales, intentar obtenerlos de Supabase
+            if (window.initSupabase) {
+                const supabase = window.initSupabase();
+                if (supabase) {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session) {
+                        const { data: profile } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', session.user.id)
+                            .single();
+                        
+                        updateSidebarUser({
+                            email: session.user.email,
+                            username: profile?.username || session.user.email.split('@')[0],
+                            avatar_url: profile?.avatar_url
+                        });
+                    }
+                }
+            }
         }
+
+        fetchUserForSidebar();
 
     }, 0);
 
