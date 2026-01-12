@@ -58,9 +58,11 @@
             container.innerHTML = '';
             result.data.forEach(item => {
                 const prompt = item.prompts;
+                if (!prompt) return; // Skip if prompt data is missing (e.g. deleted or RLS blocked)
+
                 const author = item.profiles?.username || 'Anónimo';
                 const permissionText = item.permission === 'edit' ? 'Puede editar' : 'Solo ver';
-                const permissionIcon = item.permission === 'edit' 
+                const permissionIcon = item.permission === 'edit'
                     ? '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>'
                     : '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>';
 
@@ -70,7 +72,7 @@
                 const card = document.createElement('div');
                 card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:shadow-lg transition-all duration-300 h-[220px] cursor-pointer';
                 card.onclick = () => window.location.href = `edit-note.html?id=${prompt.id}`;
-                
+
                 card.innerHTML = `
                     <div class="h-[88px] ${colors.bg} flex items-center justify-center relative">
                         <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
@@ -130,7 +132,7 @@
             result.data.forEach(item => {
                 const prompt = item.prompts;
                 const sharedWith = item.profiles?.username || 'Usuario';
-                
+
                 const colors = window.PromptCard ? window.PromptCard.getAIColors(prompt.ai_types) : { bg: 'bg-slate-600', text: 'text-slate-400' };
                 const icon = window.PromptCard ? window.PromptCard.getAIIcon(prompt.ai_types) : '';
 
