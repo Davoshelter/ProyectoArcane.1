@@ -9,25 +9,44 @@ const SIDEBAR_HTML = `
     #sidebar.collapsed { width: 5rem !important; }
     #sidebar.collapsed .sidebar-text { opacity: 0; width: 0; overflow: hidden; white-space: nowrap; }
     #sidebar.collapsed .logo-full { display: none; }
-    #sidebar.collapsed .logo-icon { display: flex !important; }
+    #sidebar.collapsed .logo-icon { display: flex !important; margin-bottom: 1rem; }
+    
+    /* Centrar contenido del header en colapso */
+    #sidebar.collapsed .sidebar-header {
+        flex-direction: column !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        justify-content: center !important;
+        gap: 0.5rem;
+    }
+
+    #sidebar.collapsed #sidebar-collapse-btn { 
+        margin: 0 auto !important;
+    }
     #sidebar.collapsed #sidebar-collapse-btn svg { transform: rotate(180deg); }
+    
+    /* Ocultar user info extra en colapso */
+    #sidebar.collapsed #user-name, #sidebar.collapsed #user-email { display: none; }
 </style>
 
 <aside id="sidebar" class="fixed left-0 top-0 h-screen bg-slate-800 border-r border-slate-700 flex flex-col z-40 w-64 lg:translate-x-0 -translate-x-full">
     <!-- Header -->
-    <div class="p-4 border-b border-slate-700 flex items-center justify-between min-h-[72px]">
+    <div class="sidebar-header p-4 border-b border-slate-700 flex items-center justify-between min-h-[72px]">
         <a href="index.html" class="logo-full flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25 flex-shrink-0">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             </div>
             <span class="sidebar-text text-xl font-bold tracking-tight"><span class="text-slate-200">PROMPT</span><span class="text-indigo-400">HUB</span></span>
         </a>
+        
+        <!-- Logo Icono (Solo visible colapsado) -->
         <a href="index.html" class="logo-icon hidden items-center justify-center mx-auto">
             <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             </div>
         </a>
-        <button id="sidebar-collapse-btn" class="sidebar-text p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg transition-all flex-shrink-0">
+
+        <button id="sidebar-collapse-btn" class="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg transition-all flex-shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
         </button>
     </div>
