@@ -663,21 +663,61 @@
     }
 
     // Exponer revokeAccess globalmente para que funcione el onclick
-    window.revokeAccess = async (shareId) => {
-        if (!confirm('¿Seguro que quieres quitar el acceso a este usuario?')) return;
-        try {
-            const { error } = await supabase
-                .from('prompt_shares')
-                .delete()
-                .eq('id', shareId);
-            
-            if (error) throw error;
-            safeShowToast('Acceso revocado');
-            loadSharedUsers(); // Recargar lista
-        } catch (e) {
-            safeShowToast('Error al revocar: ' + e.message, 'error');
+    let shareIdToRevoke = null;
+    window.revokeAccess = (shareId) => {
+        shareIdToRevoke = shareId;
+        const modal = document.getElementById('revoke-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
     };
+
+    // Botones del modal de revocar
+    const confirmRevokeBtn = document.getElementById('confirm-revoke-btn');
+    const cancelRevokeBtn = document.getElementById('cancel-revoke-btn');
+    const revokeModal = document.getElementById('revoke-modal');
+
+    if (confirmRevokeBtn) {
+        confirmRevokeBtn.onclick = async () => {
+            if (!shareIdToRevoke) return;
+            
+            confirmRevokeBtn.disabled = true;
+            confirmRevokeBtn.textContent = 'Revocando...';
+            
+            try {
+                const { error } = await supabase
+                    .from('prompt_shares')
+                    .delete()
+                    .eq('id', shareIdToRevoke);
+                
+                if (error) throw error;
+                
+                safeShowToast('Acceso revocado');
+                if (revokeModal) {
+                    revokeModal.classList.add('hidden');
+                    revokeModal.classList.remove('flex');
+                }
+                loadSharedUsers(); // Recargar lista
+            } catch (e) {
+                safeShowToast('Error al revocar: ' + e.message, 'error');
+            } finally {
+                confirmRevokeBtn.disabled = false;
+                confirmRevokeBtn.textContent = 'Sí, revocar';
+                shareIdToRevoke = null;
+            }
+        };
+    }
+
+    if (cancelRevokeBtn) {
+        cancelRevokeBtn.onclick = () => {
+            if (revokeModal) {
+                revokeModal.classList.add('hidden');
+                revokeModal.classList.remove('flex');
+            }
+            shareIdToRevoke = null;
+        };
+    }
     
     if (closeShare) {
         closeShare.onclick = () => {

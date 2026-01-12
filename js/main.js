@@ -37,11 +37,14 @@ function initMobileMenu() {
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             const targetId = this.getAttribute('href');
 
-            if (targetId === '#') return;
+            // Ignorar enlaces vacíos o que no sean selectores válidos simples
+            if (!targetId || targetId === '#' || !targetId.match(/^#[a-zA-Z][\w-]*$/)) {
+                return;
+            }
 
+            e.preventDefault();
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
                 targetElement.scrollIntoView({

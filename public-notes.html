@@ -92,6 +92,48 @@
         </div>
     </main>
 
+    <!-- Modal: Ver Prompt (Vista Previa) -->
+    <div id="view-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div id="modal-icon" class="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center">
+                        <!-- Icono dinámico -->
+                    </div>
+                    <div>
+                        <h2 id="modal-title" class="text-xl font-bold text-slate-100">Título</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-slate-400">Vista pública</span>
+                            <span id="modal-category" class="px-2 py-0.5 bg-slate-700 rounded text-xs text-slate-300">Categoría</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="close-view-modal"
+                    class="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4">
+                    <pre id="modal-content" class="font-mono text-sm text-slate-300 whitespace-pre-wrap"></pre>
+                </div>
+                <div class="flex gap-3">
+                    <a id="modal-edit-btn" href="#"
+                        class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Editar Prompt
+                    </a>
+                    <button id="modal-copy-btn"
+                        class="px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-xl transition-colors">
+                        Copiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Supabase SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 

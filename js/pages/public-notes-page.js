@@ -59,6 +59,16 @@
             const promptCards = result.data.map(p => renderPublicPromptCard(p)).join('');
             container.innerHTML = promptCards + renderPublishCard();
 
+            // Asignar eventos de click a las cards generadas
+            document.querySelectorAll('.public-card').forEach(card => {
+                card.onclick = (e) => {
+                    e.preventDefault();
+                    const promptId = card.getAttribute('data-id');
+                    const prompt = result.data.find(p => p.id === promptId);
+                    if (prompt) openViewModal(prompt);
+                };
+            });
+
             // Paginación
             if (typeof PromptHub !== 'undefined' && PromptHub.Pagination && totalPublic > 12) {
                 const pagination = new PromptHub.Pagination({
@@ -82,6 +92,43 @@
         }
     }
 
+    function openViewModal(prompt) {
+        const modal = document.getElementById('view-modal');
+        if (!modal) return;
+
+        // Poblar datos
+        document.getElementById('modal-title').textContent = prompt.title || 'Sin título';
+        document.getElementById('modal-content').textContent = prompt.content || '';
+        document.getElementById('modal-edit-btn').href = `edit-note.html?id=${prompt.id}`;
+        
+        const catEl = document.getElementById('modal-category');
+        catEl.textContent = prompt.categories?.name || 'General';
+        catEl.style.color = prompt.categories?.color || '#cbd5e1';
+        catEl.style.backgroundColor = (prompt.categories?.color || '#64748b') + '20';
+
+        // Icono
+        const iconContainer = document.getElementById('modal-icon');
+        if (window.PromptCard) {
+            const colors = window.PromptCard.getAIColors(prompt.ai_types);
+            iconContainer.className = `w-10 h-10 rounded-xl flex items-center justify-center ${colors.bg}`;
+            iconContainer.innerHTML = window.PromptCard.getAIIcon(prompt.ai_types).replace('w-8 h-8', 'w-5 h-5');
+        }
+
+        // Mostrar
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // Cerrar
+        const closeBtn = document.getElementById('close-view-modal');
+        closeBtn.onclick = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+        modal.onclick = (e) => {
+            if(e.target === modal) closeBtn.click();
+        };
+    }
+
     function renderPublicPromptCard(prompt) {
         const colors = window.PromptCard ? window.PromptCard.getAIColors(prompt.ai_types) : { bg: 'bg-slate-600', text: 'text-slate-400', hover: '' };
         const icon = window.PromptCard ? window.PromptCard.getAIIcon(prompt.ai_types) : '';
@@ -91,7 +138,7 @@
         const description = prompt.description || prompt.content?.substring(0, 100) || '';
 
         return `
-        <div class="group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden ${colors.hover} hover:shadow-lg transition-all duration-300 h-[250px]">
+        <div class="public-card group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden ${colors.hover} hover:shadow-lg transition-all duration-300 h-[250px] cursor-pointer" data-id="${prompt.id}">
             <div class="h-[88px] ${colors.bg} flex items-center justify-center relative">
                 <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                     ${icon}
@@ -116,7 +163,7 @@
                         </svg>
                         ${views} vistas
                     </span>
-                    <a href="edit-note.html?id=${prompt.id}" class="text-indigo-400 text-xs hover:text-indigo-300">Editar →</a>
+                    <span class="text-indigo-400 text-xs hover:text-indigo-300">Ver →</span>
                 </div>
             </div>
         </div>`;

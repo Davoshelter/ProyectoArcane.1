@@ -269,8 +269,21 @@
                     if (error) throw error;
 
                     // 5. Éxito
-                    console.log('✅ Registro exitoso:', data);
+                    console.log('✅ Debug Registro:', data);
                     
+                    // VALIDACIÓN: Solo redirigir si identities está explícitamente vacío (usuario duplicado en Supabase)
+                    if (data.user && data.user.identities && data.user.identities.length === 0) {
+                        console.warn('⚠️ Usuario existente detectado (Identities vacío).');
+                        if (window.showToast) {
+                            window.showToast('Este correo ya está registrado. Por favor, inicia sesión.', 'info');
+                        }
+                        setTimeout(() => {
+                            window.location.href = 'auth-login.html';
+                        }, 2000);
+                        return;
+                    }
+                    
+                    // Si llegamos aquí, el registro fue exitoso
                     submitBtn.classList.remove('bg-indigo-500', 'hover:bg-indigo-400');
                     submitBtn.classList.add('bg-green-500', 'hover:bg-green-400');
                     submitBtn.innerHTML = `
@@ -279,15 +292,28 @@
                         </svg>
                         ¡Cuenta Creada!
                     `;
+                    
+                    if (window.showToast) window.showToast('¡Cuenta creada con éxito!', 'success');
 
-                    // Redirigir
+                    // Redirigir al dashboard (Supabase iniciará sesión si no hay confirmación de email)
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 1500);
 
                 } catch (error) {
                     console.error('❌ Error de registro:', error);
-                    alert(`Error: ${error.message}`);
+                    
+                    // Manejo específico de errores
+                    let msg = error.message;
+                    if (msg.includes('already registered') || msg.includes('unique constraint')) {
+                        msg = 'Este correo ya está registrado. Intenta iniciar sesión.';
+                    }
+                    
+                    if (window.showToast) {
+                        window.showToast(msg, 'error');
+                    } else {
+                        alert(`Error: ${msg}`);
+                    }
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnText;
                 }

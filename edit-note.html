@@ -547,6 +547,30 @@
         </div>
     </div>
 
+    <!-- MODAL: Revocar Acceso -->
+    <div id="revoke-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+            <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-100 mb-2">¿Revocar acceso?</h3>
+            <p class="text-slate-400 mb-6">El usuario ya no podrá ver ni editar esta nota en su sección de compartidos.</p>
+            <div class="flex gap-3 justify-center">
+                <button id="cancel-revoke-btn"
+                    class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-xl transition-colors">
+                    Cancelar
+                </button>
+                <button id="confirm-revoke-btn"
+                    class="px-5 py-2.5 bg-red-500 hover:bg-red-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-red-500/25">
+                    Sí, revocar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Supabase SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
