@@ -107,7 +107,7 @@
             modalContent.textContent = contentVal;
             modalContent.classList.add('whitespace-pre-wrap', 'font-mono'); // Fallback style
         }
-        document.getElementById('modal-edit-btn').href = `edit-note.html?id=${prompt.id}`;
+        document.getElementById('modal-edit-btn').href = `edit-note.html?id=${prompt.id}&from=public`;
 
         const catEl = document.getElementById('modal-category');
         catEl.textContent = prompt.categories?.name || 'General';

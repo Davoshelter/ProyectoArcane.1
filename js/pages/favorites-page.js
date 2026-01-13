@@ -72,7 +72,8 @@
                 showViews: false,
                 showAuthor: false,
                 clickable: true,
-                linkToEdit: true
+                linkToEdit: true,
+                queryParams: 'from=favorites'
             })).join('');
             container.innerHTML = html;
 

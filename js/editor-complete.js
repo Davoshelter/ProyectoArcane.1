@@ -59,6 +59,22 @@
     }
 
     const promptId = new URLSearchParams(window.location.search).get('id');
+    const fromSource = new URLSearchParams(window.location.search).get('from');
+
+    // Lógica del botón Atrás (Volver a la fuente original)
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn && fromSource) {
+        if (fromSource === 'favorites') {
+            backBtn.href = 'favorites.html';
+        } else if (fromSource === 'my-prompts') {
+            backBtn.href = 'my-prompts.html';
+        } else if (fromSource === 'shared') {
+            backBtn.href = 'shared.html';
+        } else if (fromSource === 'public') {
+            backBtn.href = 'public-notes.html';
+        }
+    }
+
     // Ya no necesitamos URLs harcodeadas si usamos supabase-client.js
 
     let supabase = null;
@@ -326,26 +342,53 @@
                     if (easyMDE.codemirror) {
                         easyMDE.codemirror.setOption('readOnly', true);
                     }
-                    // Activar Vista Previa por defecto para que se vea como documento final
-                    setTimeout(() => {
-                        if (easyMDE.togglePreview) easyMDE.togglePreview();
+                }
 
-                        // Limpiar barra de herramientas: Ocultar todo menos el ojo (Preview)
+                // Activar Vista Previa por defecto PARA TODOS
+                // Así se ve "renderizado" al entrar, pero se puede editar quitando la vista previa (si tienes permisos)
+                setTimeout(() => {
+                    if (easyMDE.togglePreview && !easyMDE.isPreviewActive()) {
+                        easyMDE.togglePreview();
+                    }
+
+                    // Si es solo lectura, limpiamos la toolbar.
+                    if (!canEdit) {
                         const toolbar = document.querySelector('.editor-toolbar');
                         if (toolbar) {
-                            // Ocultar botones de edición
                             const buttons = toolbar.querySelectorAll('a, button');
                             buttons.forEach(btn => {
                                 if (!btn.classList.contains('preview')) {
                                     btn.style.display = 'none';
                                 }
                             });
-                            // Ocultar separadores
                             const separators = toolbar.querySelectorAll('.separator');
                             separators.forEach(s => s.style.display = 'none');
                         }
-                    }, 100);
-                }
+                    } else {
+                        // Si es editor (Owner), nos aseguramos de que el Side-by-Side NO esté activo (revertir lo anterior)
+                        if (easyMDE.toggleSideBySide && easyMDE.isSideBySideActive()) {
+                            easyMDE.toggleSideBySide();
+                        }
+                        // Asegurar altura
+                        if (easyMDE.codemirror) {
+                            easyMDE.codemirror.setSize(null, "auto");
+                        }
+
+                        // IMPLEMENTACIÓN "CLICK TO EDIT":
+                        // Si el usuario hace click en la vista previa, pasamos a modo edición automáticamente
+                        const previewEl = document.querySelector('.editor-preview');
+                        if (previewEl) {
+                            previewEl.setAttribute('title', 'Haz click para editar');
+                            previewEl.style.cursor = 'text';
+                            previewEl.onclick = function () {
+                                if (easyMDE.isPreviewActive()) {
+                                    easyMDE.togglePreview(); // Volver a modo edición
+                                    safeShowToast('✏️ Modo Edición activado', 'info');
+                                }
+                            };
+                        }
+                    }
+                }, 100);
             } else {
                 console.warn('⚠️ loadData: EasyMDE no está listo, usando fallback');
                 const contentArea = document.getElementById('prompt-content');

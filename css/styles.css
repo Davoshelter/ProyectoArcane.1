@@ -492,8 +492,10 @@ html {
 }
 
 .editor-toolbar {
-    background-color: rgba(15, 23, 42, 0.8) !important; /* bg-slate-900/80 */
-    border: 1px solid rgba(51, 65, 85, 0.5) !important; /* border-slate-700/50 */
+    background-color: rgba(15, 23, 42, 0.8) !important;
+    /* bg-slate-900/80 */
+    border: 1px solid rgba(51, 65, 85, 0.5) !important;
+    /* border-slate-700/50 */
     border-radius: 0.75rem !important;
     padding: 0.5rem !important;
     position: sticky !important;
@@ -504,15 +506,19 @@ html {
 }
 
 .editor-toolbar button {
-    color: #94a3b8 !important; /* text-slate-400 */
+    color: #94a3b8 !important;
+    /* text-slate-400 */
     border: none !important;
     border-radius: 0.5rem !important;
     transition: all 0.2s ease;
 }
 
-.editor-toolbar button:hover, .editor-toolbar button.active {
-    background-color: rgba(51, 65, 85, 0.5) !important; /* bg-slate-700/50 */
-    color: #f8fafc !important; /* text-slate-50 */
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+    background-color: rgba(51, 65, 85, 0.5) !important;
+    /* bg-slate-700/50 */
+    color: #f8fafc !important;
+    /* text-slate-50 */
 }
 
 .editor-toolbar i.separator {
@@ -523,7 +529,8 @@ html {
 .CodeMirror {
     background: transparent !important;
     border: none !important;
-    color: #cbd5e1 !important; /* text-slate-300 */
+    color: #cbd5e1 !important;
+    /* text-slate-300 */
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 1rem !important;
     line-height: 1.75 !important;
@@ -531,86 +538,138 @@ html {
 }
 
 .CodeMirror-cursor {
-    border-left: 2px solid #6366f1 !important; /* Indigo cursor */
+    border-left: 2px solid #6366f1 !important;
+    /* Indigo cursor */
 }
 
 /* Fix Selection Background (No more white selection) */
 .CodeMirror-selected {
-    background-color: rgba(99, 102, 241, 0.3) !important; /* Indigo selection */
+    background-color: rgba(99, 102, 241, 0.3) !important;
+    /* Indigo selection */
 }
 
 .CodeMirror-focused .CodeMirror-selected {
     background-color: rgba(99, 102, 241, 0.4) !important;
 }
 
-.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection {
+.CodeMirror-line::selection,
+.CodeMirror-line>span::selection,
+.CodeMirror-line>span>span::selection {
     background-color: rgba(99, 102, 241, 0.3) !important;
 }
 
 /* Headers visuales en el editor */
-.cm-header-1 { font-size: 1.75em; font-weight: 700; color: #10b981 !important; line-height: 1.5; }
-.cm-header-2 { font-size: 1.5em; font-weight: 600; color: #facc15 !important; line-height: 1.5; }
-.cm-header-3 { font-size: 1.25em; font-weight: 600; color: #fb7185 !important; line-height: 1.5; }
-.cm-strong { color: #f8fafc !important; font-weight: 700; }
-.cm-em { color: #94a3b8 !important; font-style: italic; }
-.cm-quote { color: #64748b !important; font-style: italic; }
+.cm-header-1 {
+    font-size: 1.75em;
+    font-weight: 700;
+    color: #10b981 !important;
+    line-height: 1.5;
+}
+
+.cm-header-2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #facc15 !important;
+    line-height: 1.5;
+}
+
+.cm-header-3 {
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #fb7185 !important;
+    line-height: 1.5;
+}
+
+.cm-strong {
+    color: #f8fafc !important;
+    font-weight: 700;
+}
+
+.cm-em {
+    color: #94a3b8 !important;
+    font-style: italic;
+}
+
+.cm-quote {
+    color: #64748b !important;
+    font-style: italic;
+}
 
 /* Ocultar elementos innecesarios */
-.editor-statusbar { display: none !important; }
+.editor-statusbar {
+    display: none !important;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    EASYMDE PREVIEW & SIDE-BY-SIDE FIXES
    ───────────────────────────────────────────────────────────────────────────── */
-.editor-preview, .editor-preview-side {
-    background-color: #0f172a !important; /* bg-slate-900 */
-    color: #cbd5e1 !important; /* text-slate-300 */
-    border-color: #334155 !important; /* border-slate-700 */
+.editor-preview,
+.editor-preview-side {
+    background-color: #0f172a !important;
+    /* bg-slate-900 */
+    color: #cbd5e1 !important;
+    /* text-slate-300 */
+    border-color: #334155 !important;
+    /* border-slate-700 */
     font-family: 'Inter', sans-serif !important;
     padding: 2rem !important;
     line-height: 1.6 !important;
 }
 
 /* Forzar tamaños en PREVIEW para que no se vean planos */
-.editor-preview h1, .editor-preview-side h1 { 
-    font-size: 2em !important; 
+.editor-preview h1,
+.editor-preview-side h1 {
+    font-size: 2em !important;
     font-weight: 800 !important;
-    color: #10b981 !important; 
-    border-bottom: 1px solid #334155; 
-    padding-bottom: 0.5rem; 
+    color: #10b981 !important;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 0.5rem;
     margin-top: 1.5rem !important;
     margin-bottom: 1rem !important;
 }
-.editor-preview h2, .editor-preview-side h2 { 
-    font-size: 1.5em !important; 
+
+.editor-preview h2,
+.editor-preview-side h2 {
+    font-size: 1.5em !important;
     font-weight: 700 !important;
-    color: #facc15 !important; 
+    color: #facc15 !important;
     margin-top: 1.2rem !important;
     margin-bottom: 0.8rem !important;
 }
-.editor-preview h3, .editor-preview-side h3 { 
-    font-size: 1.25em !important; 
+
+.editor-preview h3,
+.editor-preview-side h3 {
+    font-size: 1.25em !important;
     font-weight: 600 !important;
-    color: #fb7185 !important; 
+    color: #fb7185 !important;
     margin-top: 1rem !important;
     margin-bottom: 0.5rem !important;
 }
-.editor-preview p, .editor-preview-side p {
+
+.editor-preview p,
+.editor-preview-side p {
     margin-bottom: 1rem !important;
 }
-.editor-preview ul, .editor-preview-side ul {
+
+.editor-preview ul,
+.editor-preview-side ul {
     list-style-type: disc !important;
     padding-left: 1.5rem !important;
     margin-bottom: 1rem !important;
 }
-.editor-preview ol, .editor-preview-side ol {
+
+.editor-preview ol,
+.editor-preview-side ol {
     list-style-type: decimal !important;
     padding-left: 1.5rem !important;
     margin-bottom: 1rem !important;
 }
 
 /* Fix Code Blocks in Preview (Dark Background) */
-.editor-preview pre, .editor-preview-side pre { 
-    background-color: #020617 !important; /* bg-slate-950 */
+.editor-preview pre,
+.editor-preview-side pre {
+    background-color: #020617 !important;
+    /* bg-slate-950 */
     border: 1px solid #1e293b !important;
     border-radius: 0.5rem !important;
     padding: 1rem !important;
@@ -618,28 +677,32 @@ html {
     overflow-x: auto !important;
 }
 
-.editor-preview code, .editor-preview-side code {
+.editor-preview code,
+.editor-preview-side code {
     background-color: transparent !important;
-    color: #e2e8f0 !important; /* slate-200 */
+    color: #e2e8f0 !important;
+    /* slate-200 */
     font-family: 'JetBrains Mono', monospace !important;
 }
 
 /* Fix Side-by-Side Layout */
 .EasyMDEContainer.sided--no-fullscreen .CodeMirror-sided {
     width: 50% !important;
-    right: 50% !important; /* Mover el editor a la izquierda */
+    right: 50% !important;
+    /* Mover el editor a la izquierda */
     position: fixed !important;
     top: 72px !important;
     bottom: 0 !important;
     height: auto !important;
     border-right: 1px solid #334155 !important;
     z-index: 30 !important;
-    background: #020617 !important; /* slate-950 */
+    background: #020617 !important;
+    /* slate-950 */
 }
 
 .EasyMDEContainer .editor-preview-side {
     position: fixed !important;
-    top: 72px !important; 
+    top: 72px !important;
     bottom: 0 !important;
     right: 0 !important;
     width: 50% !important;
@@ -647,4 +710,194 @@ html {
     z-index: 30 !important;
     border-left: none !important;
     margin: 0 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY PROSE FIXES (Tailwind Plugin Simulation)
+   ───────────────────────────────────────────────────────────────────────────── */
+.prose {
+    color: #cbd5e1;
+    /* text-slate-300 */
+    line-height: 1.75;
+}
+
+.prose h1 {
+    color: #10b981;
+    /* emerald-500 */
+    font-weight: 800;
+    font-size: 2.25em;
+    margin-top: 0;
+    margin-bottom: 0.8888889em;
+    line-height: 1.1111111;
+}
+
+.prose h2 {
+    color: #facc15;
+    /* yellow-400 (Adjusted for dark mode contrast) or #eab308 (yellow-500) */
+    font-weight: 700;
+    font-size: 1.5em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    line-height: 1.3333333;
+}
+
+.prose h3 {
+    color: #fb7185;
+    /* rose-400 (Adjusted) or #ef4444 (red-500) */
+    font-weight: 600;
+    font-size: 1.25em;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+    line-height: 1.6;
+}
+
+.prose p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+}
+
+.prose strong {
+    color: #f1f5f9;
+    /* text-slate-100 */
+    font-weight: 600;
+}
+
+.prose em {
+    color: #e2e8f0;
+    /* text-slate-200 */
+    font-style: italic;
+}
+
+.prose ul,
+.prose ol {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
+}
+
+.prose ul {
+    list-style-type: disc;
+}
+
+.prose ul ul {
+    list-style-type: circle;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.prose ol {
+    list-style-type: decimal;
+}
+
+.prose li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 0.375em;
+}
+
+.prose li::marker {
+    color: #64748b;
+    /* text-slate-500 */
+}
+
+/* Blockquotes */
+.prose blockquote {
+    font-weight: 500;
+    font-style: italic;
+    color: #94a3b8;
+    /* text-slate-400 */
+    border-left-width: 0.25rem;
+    border-left-color: #475569;
+    /* border-slate-600 */
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+    padding-left: 1em;
+}
+
+/* Links */
+.prose a {
+    color: #818cf8;
+    /* text-indigo-400 */
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+/* Code Blocks */
+.prose pre {
+    background-color: #020617;
+    /* bg-slate-950 */
+    overflow-x: auto;
+    font-size: 0.875em;
+    line-height: 1.7142857;
+    margin-top: 1.7142857em;
+    margin-bottom: 1.7142857em;
+    border-radius: 0.375rem;
+    padding: 0.8571429em 1.1428571em;
+    border: 1px solid #1e293b;
+}
+
+.prose code {
+    color: #e2e8f0;
+    /* text-slate-200 */
+    font-weight: 600;
+    font-size: 0.875em;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.prose pre code {
+    background-color: transparent;
+    border-width: 0;
+    border-radius: 0;
+    padding: 0;
+    font-weight: 400;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
+}
+
+/* Inline Code */
+.prose :not(pre)>code {
+    background-color: #1e293b;
+    /* bg-slate-800 */
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    color: #f472b6;
+    /* text-pink-400 */
+    font-weight: 400;
+}
+
+/* Images */
+.prose img {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Checklists (Task Lists) */
+.prose ul.contains-task-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.prose li.task-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.prose li.task-list-item input[type="checkbox"] {
+    margin-top: 0.3em;
+}
+
+/* Hr */
+.prose hr {
+    border-color: #334155;
+    /* border-slate-700 */
+    margin-top: 3em;
+    margin-bottom: 3em;
 }

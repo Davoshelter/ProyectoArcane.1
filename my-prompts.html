@@ -316,7 +316,7 @@
 
                     prompts.forEach(p => {
                         const card = document.createElement('a');
-                        card.href = `edit-note.html?id=${p.id}`;
+                        card.href = `edit-note.html?id=${p.id}&from=my-prompts`;
                         card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
 
                         const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';

@@ -79,7 +79,8 @@
         const author = prompt.profiles?.username || 'Anónimo';
         const views = prompt.view_count || 0;
         const description = prompt.description || prompt.content?.substring(0, 100) || '';
-        const href = linkToEdit ? `edit-note.html?id=${prompt.id}` : '#';
+        const queryParams = options.queryParams ? `&${options.queryParams}` : '';
+        const href = linkToEdit ? `edit-note.html?id=${prompt.id}${queryParams}` : '#';
         const tag = clickable ? 'a' : 'div';
         const hrefAttr = clickable ? `href="${href}"` : '';
 

@@ -71,7 +71,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:shadow-lg transition-all duration-300 h-[220px] cursor-pointer';
-                card.onclick = () => window.location.href = `edit-note.html?id=${prompt.id}`;
+                card.onclick = () => window.location.href = `edit-note.html?id=${prompt.id}&from=shared`;
 
                 card.innerHTML = `
                     <div class="h-[88px] ${colors.bg} flex items-center justify-center relative">
@@ -138,7 +138,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:shadow-lg transition-all duration-300 h-[220px] cursor-pointer';
-                card.onclick = () => window.location.href = `edit-note.html?id=${prompt.id}`;
+                card.onclick = () => window.location.href = `edit-note.html?id=${prompt.id}&from=shared`;
 
                 card.innerHTML = `
                     <div class="h-[88px] ${colors.bg} flex items-center justify-center relative">
