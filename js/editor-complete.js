@@ -616,9 +616,28 @@
         return d.innerHTML;
     }
 
+    // --- AI SIDEBAR TOGGLE LOGIC ---
+    function toggleAiSidebar() {
+        const isMobile = window.innerWidth < 1024;
+        const currentWidth = ui.aiSidebar.style.width;
+
+        if (currentWidth && currentWidth !== '0px') {
+            ui.aiSidebar.style.width = '0';
+        } else {
+            ui.aiSidebar.style.width = isMobile ? '100%' : '20rem';
+        }
+    }
+
     if (ui.aiSendBtn) ui.aiSendBtn.onclick = sendMessage;
     if (ui.aiInput) ui.aiInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
-    if (ui.aiToggleBtn) ui.aiToggleBtn.onclick = () => ui.aiSidebar.style.width = '20rem';
+
+    // Desktop Button
+    if (ui.aiToggleBtn) ui.aiToggleBtn.onclick = toggleAiSidebar;
+
+    // Mobile FAB (New)
+    const mobileAiFab = document.getElementById('mobile-ai-fab');
+    if (mobileAiFab) mobileAiFab.onclick = toggleAiSidebar;
+
     if (ui.closeAiSidebar) ui.closeAiSidebar.onclick = () => ui.aiSidebar.style.width = '0';
 
     // 3. UI, SAVE & HISTORY
