@@ -612,6 +612,34 @@
     <script src="js/sidebar.js"></script>
     <script src="js/editor-complete.js"></script>
     <script src="js/main.js"></script>
+    <!-- MODAL: Cambios sin guardar -->
+    <div id="unsaved-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+            <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-100 mb-2">¿Guardar cambios?</h3>
+            <p class="text-slate-400 mb-6">Tienes cambios sin guardar. Si sales ahora, se perderán.</p>
+            <div class="flex flex-col gap-3">
+                <button id="unsaved-save-btn"
+                    class="w-full py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-indigo-500/25">
+                    Guardar y Salir
+                </button>
+                <button id="unsaved-discard-btn"
+                    class="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-xl transition-colors">
+                    Salir sin guardar
+                </button>
+                <button id="unsaved-cancel-btn"
+                    class="w-full py-2.5 text-slate-500 hover:text-slate-300 font-medium transition-colors text-sm">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -83,6 +83,8 @@
     let isFavorite = false;
     let isPublic = false;
     let easyMDE = null;
+    let hasUnsavedChanges = false;
+    let pendingExitUrl = null; // Para guardar a dónde iba el usuario
 
     // --- EASYMDE INITIALIZATION ---
     if (document.getElementById('prompt-content')) {
@@ -99,6 +101,27 @@
                 codeSyntaxHighlighting: true,
             },
         });
+
+        // Detectar cambios en el editor
+        easyMDE.codemirror.on("change", () => {
+            markAsDirty();
+        });
+    }
+
+    // --- DIRTY STATE MANAGEMENT ---
+    function markAsDirty() {
+        if (!hasUnsavedChanges) {
+            hasUnsavedChanges = true;
+            console.log('📝 Cambios detectados (Dirty State trashed)');
+            // Opcional: Cambiar UI del botón guardar para indicar pendiente
+            if (ui.saveBtn) ui.saveBtn.classList.add('animate-pulse');
+        }
+    }
+
+    function markAsClean() {
+        hasUnsavedChanges = false;
+        console.log('✅ Estado limpio (Saved)');
+        if (ui.saveBtn) ui.saveBtn.classList.remove('animate-pulse');
     }
 
     // --- FUNCIONES DE ACTUALIZACIÓN DE UI (Globales al script) ---
@@ -257,6 +280,63 @@
         if (btnAI) btnAI.onclick = () => {
             if (ui.aiSidebar) ui.aiSidebar.style.width = '20rem';
         };
+
+        // Inputs para Dirty State
+        if (ui.title) ui.title.addEventListener('input', markAsDirty);
+        if (ui.notes) ui.notes.addEventListener('input', markAsDirty);
+
+        // Intercept Back Button
+        const backBtn = document.getElementById('back-btn');
+        if (backBtn) {
+            backBtn.onclick = (e) => {
+                if (hasUnsavedChanges) {
+                    e.preventDefault();
+                    pendingExitUrl = backBtn.href;
+                    showUnsavedModal();
+                }
+            };
+        }
+
+        // Window Close / Refresh
+        window.onbeforeunload = (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = ''; // Standard for browsers
+                return '';
+            }
+        };
+
+        // Modal de Cambios sin guardar
+        const unsavedModal = document.getElementById('unsaved-modal');
+        const unsavedSave = document.getElementById('unsaved-save-btn');
+        const unsavedDiscard = document.getElementById('unsaved-discard-btn');
+        const unsavedCancel = document.getElementById('unsaved-cancel-btn');
+
+        if (unsavedSave) unsavedSave.onclick = async () => {
+            // Guardar y Salir
+            await handleSaveClick(); // Reutiliza lógica de guardado
+            markAsClean(); // Asegurar limpio
+            if (pendingExitUrl) window.location.href = pendingExitUrl;
+            else window.history.back();
+        };
+
+        if (unsavedDiscard) unsavedDiscard.onclick = () => {
+            // Salir sin guardar
+            hasUnsavedChanges = false; // Forzar limpio para permitir salida
+            if (pendingExitUrl) window.location.href = pendingExitUrl;
+            else window.history.back();
+        };
+
+        if (unsavedCancel) unsavedCancel.onclick = () => {
+            unsavedModal.classList.add('hidden');
+            unsavedModal.classList.remove('flex');
+            pendingExitUrl = null;
+        };
+
+        function showUnsavedModal() {
+            unsavedModal.classList.remove('hidden');
+            unsavedModal.classList.add('flex');
+        }
     }
 
     // Iniciar
@@ -451,6 +531,9 @@
                 ui.lastEditLabels.forEach(l => l.textContent = dateStr);
             }
 
+            // INICIALMENTE LIMPIO AL CARGAR
+            setTimeout(() => markAsClean(), 500); // Pequeño delay para evitar falsos positivos al setear valores
+
             console.log('✅ loadData: Completado con éxito');
 
             // Cargar conexiones (Segundo Cerebro)
@@ -529,6 +612,7 @@
             const nextV = (v && v.length) ? v[0].version_number + 1 : 1;
             await supabase.from('prompt_versions').insert([{ prompt_id: promptId, version_number: nextV, content: contentVal }]);
             ui.headerTitle.textContent = updates.title;
+            markAsClean(); // <--- IMPORTANTE: Marcar como limpio tras guardar con éxito
             safeShowToast('✅ Cambios guardados');
         } catch (e) { safeShowToast(e.message, 'error'); } finally { ui.saveBtn.disabled = false; ui.saveBtn.innerHTML = original; }
     }
@@ -641,23 +725,16 @@
     if (ui.closeAiSidebar) ui.closeAiSidebar.onclick = () => ui.aiSidebar.style.width = '0';
 
     // 3. UI, SAVE & HISTORY
+    // NOTA: handleSaveClick ya está definido arriba y asignado en setupEventListeners,
+    // pero aquí abajo había un bloque duplicado o redundante en el código original.
+    // Lo mantenemos sincronizado o lo eliminamos si es código muerto.
+    // En el código original provisto, parece haber una re-definición o bloque similar.
+    // Si UI.saveBtn existe, usar la función unificada.
     if (ui.saveBtn) {
-        ui.saveBtn.onclick = async () => {
-            const original = ui.saveBtn.innerHTML;
-            ui.saveBtn.disabled = true; ui.saveBtn.textContent = 'Guardando...';
-            try {
-                const contentVal = easyMDE ? easyMDE.value() : document.getElementById('prompt-content').value;
-                const updates = { title: ui.title.value, content: contentVal, description: ui.notes.value, updated_at: new Date().toISOString() };
-                await supabase.from('prompts').update(updates).eq('id', promptId);
-                // Version
-                const { data: v } = await supabase.from('prompt_versions').select('version_number').eq('prompt_id', promptId).order('version_number', { ascending: false }).limit(1);
-                const nextV = (v && v.length) ? v[0].version_number + 1 : 1;
-                await supabase.from('prompt_versions').insert([{ prompt_id: promptId, version_number: nextV, content: contentVal }]);
-                ui.headerTitle.textContent = updates.title;
-                showToast('✅ Cambios guardados');
-            } catch (e) { showToast(e.message, 'error'); } finally { ui.saveBtn.disabled = false; ui.saveBtn.innerHTML = original; }
-        };
+        // Aseguramos que use la función handleSaveClick unificada que tiene markAsClean
+        ui.saveBtn.onclick = handleSaveClick;
     }
+
 
     if (ui.historyBtn) {
         ui.historyBtn.onclick = async () => {
