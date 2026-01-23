@@ -69,7 +69,7 @@ function initComponentEvents(componentId) {
             }
 
             const { data: { session } } = await supabase.auth.getSession();
-            
+
             const navLogin = document.getElementById('nav-login');
             const navRegister = document.getElementById('nav-register');
             const navDashboard = document.getElementById('nav-dashboard');

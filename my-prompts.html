@@ -57,7 +57,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">My Unit</h1>
+                        <h1 class="text-2xl lg:text-3xl font-bold text-slate-100">Mi Unidad</h1>
                         <p class="text-slate-400 mt-1">Todos tus prompts organizados • <span id="total-count">...</span>
                             prompts</p>
                     </div>
@@ -76,7 +76,7 @@
             </div>
 
             <!-- Todos los Prompts -->
-            <div class="mb-8">
+            <div id="all-prompts-section" class="mb-8">
                 <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
                     <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -197,7 +197,7 @@
                 `;
 
                     // Insertar antes del grid de prompts
-                    const promptsSection = document.querySelector('.mb-8'); // El div de "Todos los Prompts"
+                    const promptsSection = document.getElementById('all-prompts-section');
                     promptsSection.parentNode.insertBefore(container, promptsSection);
 
                     const grid = document.getElementById('folders-grid');
