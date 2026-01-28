@@ -9,16 +9,20 @@
     // =========================================================================
     // CONFIGURACIÓN DE COLORES POR TIPO DE IA
     // =========================================================================
+    // ═══════════════════════════════════════════════════════════════════════════
+    // COLORES OFICIALES DE MARCA POR IA
+    // Esta es la ÚNICA fuente de verdad para colores - NO duplicar en otros archivos
+    // ═══════════════════════════════════════════════════════════════════════════
     const AI_COLORS = {
-        'chatgpt': { bg: 'bg-emerald-500', border: 'border-emerald-500', text: 'text-emerald-400', hover: 'hover:border-emerald-500 hover:shadow-emerald-500/20' },
-        'claude': { bg: 'bg-violet-500', border: 'border-violet-500', text: 'text-violet-400', hover: 'hover:border-violet-500 hover:shadow-violet-500/20' },
-        'gemini': { bg: 'bg-blue-500', border: 'border-blue-500', text: 'text-blue-400', hover: 'hover:border-blue-500 hover:shadow-blue-500/20' },
-        'midjourney': { bg: 'bg-indigo-500', border: 'border-indigo-500', text: 'text-indigo-400', hover: 'hover:border-indigo-500 hover:shadow-indigo-500/20' },
-        'dalle': { bg: 'bg-teal-500', border: 'border-teal-500', text: 'text-teal-400', hover: 'hover:border-teal-500 hover:shadow-teal-500/20' },
-        'stable-diffusion': { bg: 'bg-orange-500', border: 'border-orange-500', text: 'text-orange-400', hover: 'hover:border-orange-500 hover:shadow-orange-500/20' },
-        'deepseek': { bg: 'bg-blue-700', border: 'border-blue-700', text: 'text-blue-400', hover: 'hover:border-blue-700 hover:shadow-blue-700/20' },
-        'grok': { bg: 'bg-slate-600', border: 'border-slate-600', text: 'text-slate-400', hover: 'hover:border-slate-600 hover:shadow-slate-600/20' },
-        'copilot': { bg: 'bg-sky-500', border: 'border-sky-500', text: 'text-sky-400', hover: 'hover:border-sky-500 hover:shadow-sky-500/20' },
+        'chatgpt': { bg: 'bg-emerald-500', border: 'border-emerald-500', text: 'text-emerald-400', hover: 'hover:border-emerald-500 hover:shadow-emerald-500/20' },       // Verde OpenAI
+        'claude': { bg: 'bg-orange-500', border: 'border-orange-500', text: 'text-orange-400', hover: 'hover:border-orange-500 hover:shadow-orange-500/20' },             // Naranja Anthropic
+        'gemini': { bg: 'bg-blue-500', border: 'border-blue-500', text: 'text-blue-400', hover: 'hover:border-blue-500 hover:shadow-blue-500/20' },                        // Azul Google
+        'midjourney': { bg: 'bg-indigo-500', border: 'border-indigo-500', text: 'text-indigo-400', hover: 'hover:border-indigo-500 hover:shadow-indigo-500/20' },          // Índigo MidJourney
+        'dalle': { bg: 'bg-teal-500', border: 'border-teal-500', text: 'text-teal-400', hover: 'hover:border-teal-500 hover:shadow-teal-500/20' },                          // Teal OpenAI DALL-E
+        'stable-diffusion': { bg: 'bg-purple-600', border: 'border-purple-600', text: 'text-purple-400', hover: 'hover:border-purple-600 hover:shadow-purple-600/20' },    // Púrpura Stability AI
+        'deepseek': { bg: 'bg-violet-500', border: 'border-violet-500', text: 'text-violet-400', hover: 'hover:border-violet-500 hover:shadow-violet-500/20' },            // Violeta DeepSeek
+        'grok': { bg: 'bg-gray-900', border: 'border-gray-900', text: 'text-gray-400', hover: 'hover:border-gray-700 hover:shadow-gray-900/20' },                          // Negro X/Twitter
+        'copilot': { bg: 'bg-sky-600', border: 'border-sky-600', text: 'text-sky-400', hover: 'hover:border-sky-600 hover:shadow-sky-600/20' },                            // Azul cielo Microsoft
         'default': { bg: 'bg-slate-600', border: 'border-slate-600', text: 'text-slate-400', hover: 'hover:border-slate-600 hover:shadow-slate-600/20' }
     };
 

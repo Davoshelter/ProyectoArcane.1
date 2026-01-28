@@ -190,27 +190,18 @@
                         return;
                     }
 
-                    // Mapa de colores por slug de IA (para el fondo de la tarjeta)
-                    const colors = {
-                        'chatgpt': 'bg-emerald-500',
-                        'midjourney': 'bg-indigo-500',
-                        'claude': 'bg-orange-500',
-                        'gemini': 'bg-blue-500',
-                        'stable-diffusion': 'bg-orange-600',
-                        'dalle': 'bg-teal-500',
-                        'deepseek': 'bg-blue-700', // Nuevo: Azul profundo
-                        'grok': 'bg-gray-900',     // Nuevo: Oscuro
-                        'copilot': 'bg-sky-600',   // Nuevo: Azul cielo Microsoft
-                        'default': 'bg-slate-700'
-                    };
-
+                    // Usar colores centralizados de PromptCard (fuente única de verdad)
                     prompts.forEach(p => {
                         const card = document.createElement('a');
                         card.href = `edit-note.html?id=${p.id}`;
-                        card.className = 'group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden hover:border-indigo-500 hover:shadow-lg transition-all h-[220px] animate-fadeIn';
 
-                        const aiSlug = p.ai_types?.slug?.toLowerCase() || 'default';
-                        const bgColor = colors[aiSlug] || colors['default'];
+                        // Obtener colores de PromptCard (centralizado)
+                        const aiColors = window.PromptCard?.getAIColors?.(p.ai_types) || { bg: 'bg-slate-700', hover: '' };
+                        const bgColor = aiColors.bg;
+                        const hoverClass = aiColors.hover || 'hover:border-indigo-500 hover:shadow-lg';
+
+                        card.className = `group block rounded-xl border border-slate-700 bg-slate-800 overflow-hidden ${hoverClass} transition-all h-[220px] animate-fadeIn`;
+
                         const aiName = p.ai_types?.name || 'IA';
                         const catName = p.categories?.name || 'General';
 
@@ -444,6 +435,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/prompt-card.js"></script>
     <script src="js/sidebar.js"></script>
     <script src="js/main.js"></script>
     <script>
