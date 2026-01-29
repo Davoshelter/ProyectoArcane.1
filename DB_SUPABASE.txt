@@ -1,0 +1,126 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.activity_logs (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid,
+  action_type text NOT NULL,
+  details text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT activity_logs_pkey PRIMARY KEY (id),
+  CONSTRAINT activity_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.ai_types (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  name text NOT NULL,
+  slug text UNIQUE,
+  icon_svg text,
+  CONSTRAINT ai_types_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.categories (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  name text NOT NULL,
+  slug text UNIQUE,
+  color text DEFAULT '#3b82f6'::text,
+  icon text,
+  CONSTRAINT categories_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.chat_messages (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  session_id uuid NOT NULL,
+  role text NOT NULL CHECK (role = ANY (ARRAY['user'::text, 'model'::text])),
+  content text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT chat_messages_pkey PRIMARY KEY (id),
+  CONSTRAINT chat_messages_session_id_fkey FOREIGN KEY (session_id) REFERENCES public.chat_sessions(id)
+);
+CREATE TABLE public.chat_sessions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  title text DEFAULT 'Nueva Conversación'::text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT chat_sessions_pkey PRIMARY KEY (id),
+  CONSTRAINT chat_sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  username text UNIQUE,
+  full_name text,
+  avatar_url text,
+  updated_at timestamp with time zone,
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.prompt_connections (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  source_id uuid,
+  target_id uuid,
+  user_id uuid,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT prompt_connections_pkey PRIMARY KEY (id),
+  CONSTRAINT prompt_connections_source_id_fkey FOREIGN KEY (source_id) REFERENCES public.prompts(id),
+  CONSTRAINT prompt_connections_target_id_fkey FOREIGN KEY (target_id) REFERENCES public.prompts(id),
+  CONSTRAINT prompt_connections_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.prompt_embeddings (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  prompt_id uuid NOT NULL UNIQUE,
+  embedding USER-DEFINED,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT prompt_embeddings_pkey PRIMARY KEY (id),
+  CONSTRAINT prompt_embeddings_prompt_id_fkey FOREIGN KEY (prompt_id) REFERENCES public.prompts(id)
+);
+CREATE TABLE public.prompt_shares (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  prompt_id uuid,
+  shared_with uuid,
+  permission text DEFAULT 'view'::text CHECK (permission = ANY (ARRAY['view'::text, 'edit'::text])),
+  shared_by uuid,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT prompt_shares_pkey PRIMARY KEY (id),
+  CONSTRAINT prompt_shares_prompt_id_fkey FOREIGN KEY (prompt_id) REFERENCES public.prompts(id),
+  CONSTRAINT prompt_shares_shared_with_fkey FOREIGN KEY (shared_with) REFERENCES public.profiles(id),
+  CONSTRAINT prompt_shares_shared_by_fkey FOREIGN KEY (shared_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.prompt_tags (
+  prompt_id uuid NOT NULL,
+  tag_id bigint NOT NULL,
+  CONSTRAINT prompt_tags_pkey PRIMARY KEY (prompt_id, tag_id),
+  CONSTRAINT prompt_tags_prompt_id_fkey FOREIGN KEY (prompt_id) REFERENCES public.prompts(id),
+  CONSTRAINT prompt_tags_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES public.tags(id)
+);
+CREATE TABLE public.prompt_versions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  prompt_id uuid,
+  version_number integer NOT NULL,
+  content text NOT NULL,
+  change_reason text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT prompt_versions_pkey PRIMARY KEY (id),
+  CONSTRAINT prompt_versions_prompt_id_fkey FOREIGN KEY (prompt_id) REFERENCES public.prompts(id)
+);
+CREATE TABLE public.prompts (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  category_id bigint,
+  ai_type_id bigint,
+  title text NOT NULL,
+  content text NOT NULL,
+  description text,
+  is_public boolean DEFAULT false,
+  is_favorite boolean DEFAULT false,
+  view_count integer DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT prompts_pkey PRIMARY KEY (id),
+  CONSTRAINT prompts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
+  CONSTRAINT prompts_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id),
+  CONSTRAINT prompts_ai_type_id_fkey FOREIGN KEY (ai_type_id) REFERENCES public.ai_types(id)
+);
+CREATE TABLE public.tags (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  name text NOT NULL UNIQUE,
+  CONSTRAINT tags_pkey PRIMARY KEY (id)
+);

@@ -15,6 +15,8 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Diff.js para comparar versiones -->
+    <script src="https://cdn.jsdelivr.net/npm/diff@5.1.0/dist/diff.min.js"></script>
 
     <!-- EasyMDE (Editor Visual Markdown) -->
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
@@ -405,12 +407,13 @@
 
     </main>
 
-    <!-- MODAL: Historial de Versiones -->
+    <!-- MODAL: Historial de Versiones (Expandido con Diff) -->
     <div id="history-modal"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div
-            class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl max-h-[80vh] flex flex-col">
-            <div class="flex items-center justify-between p-6 border-b border-slate-700">
+            class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl max-h-[85vh] flex flex-col">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 border-b border-slate-700">
                 <div class="flex items-center gap-3">
                     <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -426,10 +429,23 @@
                     </svg>
                 </button>
             </div>
-            <div id="history-list" class="flex-1 overflow-y-auto p-4 space-y-3">
-                <!-- Las versiones se cargarán aquí dinámicamente -->
-                <p class="text-slate-500 text-center py-8">No hay versiones guardadas aún.<br>Cada vez que guardes, se
-                    creará una versión.</p>
+            <!-- Body: Two Panels -->
+            <div class="flex flex-1 overflow-hidden">
+                <!-- Left: Version List -->
+                <div id="history-list" class="w-1/3 border-r border-slate-700 overflow-y-auto p-3 space-y-2">
+                    <p class="text-slate-500 text-center py-8 text-sm">No hay versiones guardadas aún.<br>Cada vez que
+                        guardes, se creará una versión.</p>
+                </div>
+                <!-- Right: Diff Panel -->
+                <div id="diff-panel" class="w-2/3 overflow-auto bg-slate-900/50 p-4">
+                    <div class="flex flex-col items-center justify-center h-full text-slate-500">
+                        <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-sm">Selecciona una versión para ver los cambios</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -610,8 +626,9 @@
     <!-- Scripts -->
     <script src="js/supabase-client.js"></script>
     <script src="js/sidebar.js"></script>
+    <script src="js/version-history.js?v=final"></script>
     <script src="js/editor-complete.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=final"></script>
     <!-- MODAL: Cambios sin guardar -->
     <div id="unsaved-modal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden items-center justify-center p-4">

@@ -619,40 +619,21 @@
 
     async function handleHistoryClick() {
         ui.historyModal.classList.remove('hidden'); ui.historyModal.classList.add('flex');
-        ui.historyList.innerHTML = 'Cargando...';
-        try {
-            const { data } = await supabase.from('prompt_versions').select('*').eq('prompt_id', promptId).order('version_number', { ascending: false });
 
-            if (!data || data.length === 0) {
-                ui.historyList.innerHTML = '<p class="text-slate-500 text-center py-4">No hay versiones guardadas.</p>';
-                return;
-            }
+        // Debug detallado
+        console.log('📜 handleHistoryClick llamado');
+        console.log('   promptId:', promptId);
+        console.log('   window.PromptHub:', window.PromptHub);
+        console.log('   VersionHistory:', window.PromptHub ? window.PromptHub.VersionHistory : 'undefined');
 
-            ui.historyList.innerHTML = '';
-            data.forEach(v => {
-                const el = document.createElement('div');
-                el.className = 'p-3 bg-slate-950/50 rounded-xl mb-2 flex justify-between items-center border border-slate-800';
-                el.innerHTML = `
-                    <div>
-                        <span class="text-indigo-400 font-mono text-sm">v${v.version_number}</span>
-                        <span class="text-slate-500 text-xs ml-2">${new Date(v.created_at).toLocaleString()}</span>
-                    </div>
-                `;
-                const restoreBtn = document.createElement('button');
-                restoreBtn.className = 'text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition-colors';
-                restoreBtn.textContent = 'Restaurar';
-                restoreBtn.onclick = () => {
-                    if (easyMDE) easyMDE.value(v.content);
-                    ui.historyModal.classList.add('hidden');
-                    ui.historyModal.classList.remove('flex');
-                    safeShowToast(`Versión v${v.version_number} restaurada. Dale a Guardar.`);
-                };
-                el.appendChild(restoreBtn);
-                ui.historyList.appendChild(el);
-            });
-        } catch (e) {
-            console.error(e);
-            ui.historyList.innerHTML = '<p class="text-red-400 text-center">Error cargando historial.</p>';
+        // Verificación más robusta
+        if (window.PromptHub && window.PromptHub.VersionHistory && typeof window.PromptHub.VersionHistory.render === 'function') {
+            console.log('✅ Módulo encontrado, llamando render...');
+            window.PromptHub.VersionHistory.render(promptId);
+        } else {
+            // Fallback si el módulo no está cargado
+            console.error('❌ Módulo VersionHistory NO disponible');
+            ui.historyList.innerHTML = '<p class="text-red-400 text-center py-4">Error: Módulo de historial no disponible. Revisa la consola (F12).</p>';
         }
     }
 
@@ -737,44 +718,7 @@
 
 
     if (ui.historyBtn) {
-        ui.historyBtn.onclick = async () => {
-            ui.historyModal.classList.remove('hidden'); ui.historyModal.classList.add('flex');
-            ui.historyList.innerHTML = 'Cargando...';
-            try {
-                const { data } = await supabase.from('prompt_versions').select('*').eq('prompt_id', promptId).order('version_number', { ascending: false });
-
-                if (!data || data.length === 0) {
-                    ui.historyList.innerHTML = '<p class="text-slate-500 text-center py-4">No hay versiones guardadas.</p>';
-                    return;
-                }
-
-                ui.historyList.innerHTML = ''; // Limpiar
-                data.forEach(v => {
-                    const el = document.createElement('div');
-                    el.className = 'p-3 bg-slate-950/50 rounded-xl mb-2 flex justify-between items-center border border-slate-800';
-                    el.innerHTML = `
-                        <div>
-                            <span class="text-indigo-400 font-mono text-sm">v${v.version_number}</span>
-                            <span class="text-slate-500 text-xs ml-2">${new Date(v.created_at).toLocaleString()}</span>
-                        </div>
-                    `;
-                    const restoreBtn = document.createElement('button');
-                    restoreBtn.className = 'text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition-colors';
-                    restoreBtn.textContent = 'Restaurar';
-                    restoreBtn.onclick = () => {
-                        if (easyMDE) easyMDE.value(v.content);
-                        ui.historyModal.classList.add('hidden');
-                        ui.historyModal.classList.remove('flex');
-                        showToast(`Versión v${v.version_number} restaurada. Dale a Guardar.`);
-                    };
-                    el.appendChild(restoreBtn);
-                    ui.historyList.appendChild(el);
-                });
-            } catch (e) {
-                console.error(e);
-                ui.historyList.innerHTML = '<p class="text-red-400 text-center">Error cargando historial.</p>';
-            }
-        };
+        ui.historyBtn.onclick = handleHistoryClick;
     }
 
     if (ui.closeHistoryModal) {

@@ -271,9 +271,10 @@ const Theme = {
 /* ─────────────────────────────────────────────────────────────────────────────
    EXPORT FOR GLOBAL USE
    ───────────────────────────────────────────────────────────────────────────── */
-window.PromptHub = {
+window.PromptHub = window.PromptHub || {};
+Object.assign(window.PromptHub, {
     Modal,
     Sidebar,
     Clipboard,
     Theme
-};
+});
