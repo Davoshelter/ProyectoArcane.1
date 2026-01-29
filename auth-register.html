@@ -137,9 +137,9 @@
                                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
-                                <input type="password" id="password" name="password" placeholder="Mínimo 6 caracteres"
+                                <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres"
                                     class="input-cyber w-full bg-slate-950 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-slate-200 placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all"
-                                    required minlength="6">
+                                    required minlength="8">
                             </div>
                         </div>
 
@@ -357,12 +357,12 @@
 
                         // 5. Enviar request
                         const { data, error } = await supabase.auth.signUp({
-                            email: email,
+                            email: emailVal,
                             password: password,
                             options: {
                                 data: {
                                     full_name: fullName,
-                                    username: email.split('@')[0]
+                                    username: emailVal.split('@')[0]
                                 }
                             }
                         });
