@@ -256,8 +256,9 @@
                 const emailError = document.getElementById('email-format-error');
 
                 function validateEmail(email) {
-                    // Regex estándar para email: texto@texto.texto
-                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    // Regex estricto: Letras, números, puntos, guiones y guiones bajos
+                    // Bloquea caracteres especiales como %, $, #, etc.
+                    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
                     return re.test(email);
                 }
 
